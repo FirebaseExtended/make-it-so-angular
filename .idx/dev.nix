@@ -9,6 +9,7 @@
     pkgs.firebase-tools
     pkgs.terraform
     pkgs.nodejs
+    pkgs.pnpm
   ];
 
   # Sets environment variables in the workspace
@@ -58,7 +59,7 @@
           terraform init --upgrade
           terraform apply -parallelism=20 --auto-approve -compact-warnings
         '';
-        npm = "npm install";
+        npm = "pnpm install";
       };
       # Runs when the workspace is (re)started
       onStart = {};
