@@ -37,6 +37,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TaskWithSubtasks, Task, TaskService } from './services/task.service';
+import { catchError, take, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 
 @Component({
   selector: 'app-root',
@@ -76,12 +79,15 @@ export class AppComponent {
     public taskService: TaskService,
     private fb: FormBuilder,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
-    this.loadTasks();
-    this.generateMaintask();
+    this.loadTasks().subscribe((tasks) => {
+      if (tasks.length === 0) {
+        this.generateMaintask();
+      }
+    });
   }
 
   initForm(): void {
@@ -171,9 +177,9 @@ export class AppComponent {
     });
   }
 
-  loadTasks(): void {
-    this.taskService.tasks$.subscribe({
-      next: (tasks: Task[]) => {
+  loadTasks(): Observable<Task[]> {
+    return this.taskService.tasks$.pipe(
+      tap((tasks: Task[]) => {
         const taskMap = new Map<string, TaskWithSubtasks>();
         tasks.forEach((task: Task) => {
           if (!task.parentId) {
@@ -197,14 +203,16 @@ export class AppComponent {
         });
 
         this.tasks = Array.from(taskMap.values());
-      },
-      error: (error: any) => {
+      }),
+      catchError((error: any) => {
         console.error('Error loading tasks:', error);
         this.snackBar.open('Error loading data', 'Close', {
           duration: 3000,
         });
-      },
-    });
+        return [];
+      }),
+      take(1),
+    );
   }
 
   loadSubtasks(maintaskId: string): void {
@@ -252,7 +260,7 @@ export class AppComponent {
     this.isLoading.set(true);
     try {
       await this.displayImagePreview(file);
-      const existingSubtasks = this.subtasks.map(t=>t.task.title);
+      const existingSubtasks = this.subtasks.map(t => t.task.title);
       const title = this.taskForm.get('title')?.value || '';
       const generatedSubtasks = await this.taskService.generateSubtasks({
         file,
@@ -261,7 +269,11 @@ export class AppComponent {
       });
       this.addSubtasksToList(generatedSubtasks.subtasks);
     } catch (error) {
-      this.handleError(error, 'Failed to generate subtasks from image.');
+      if (error instanceof GoogleGenerativeAIFetchError) {
+        this.handleError(error, error.message);
+      } else {
+        this.handleError(error, 'Failed to generate subtasks from image.');
+      }
     } finally {
       this.isLoading.set(false);
     }
@@ -278,7 +290,7 @@ export class AppComponent {
       return;
     }
     this.isLoading.set(true);
-    const existingSubtasks = this.subtasks.map(t=>t.task.title);
+    const existingSubtasks = this.subtasks.map(t => t.task.title);
     try {
       const generatedSubtasks = await this.taskService.generateSubtasks({
         title,
@@ -286,7 +298,11 @@ export class AppComponent {
       });
       this.addSubtasksToList(generatedSubtasks.subtasks);
     } catch (error) {
-      this.handleError(error, 'Failed to generate subtasks from title.');
+      if (error instanceof GoogleGenerativeAIFetchError) {
+        this.handleError(error, error.message);
+      } else {
+        this.handleError(error, 'Failed to generate subtasks from title.');
+      }
     } finally {
       this.isLoading.set(false);
     }
@@ -331,7 +347,11 @@ export class AppComponent {
 
       this.openEditor(newTask);
     } catch (error) {
-      this.handleError(error, 'Failed to generate main task');
+      if (error instanceof GoogleGenerativeAIFetchError) {
+        this.handleError(error, error.message);
+      } else {
+        this.handleError(error, 'Failed to generate main task.');
+      }
     } finally {
       this.isLoading.set(false);
     }
