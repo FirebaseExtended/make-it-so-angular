@@ -6,7 +6,6 @@
 
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    pkgs.firebase-tools
     pkgs.terraform
     pkgs.nodejs
     pkgs.pnpm
