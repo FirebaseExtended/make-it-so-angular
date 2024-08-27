@@ -33,6 +33,9 @@ to store the to-do list items.
     (most importantly `apiKey`, `projectId`, and `appId`).
   * Find your Gemini API key (`gemini_api_key`).
 
+  Note that if you [run the sample app in IDX](https://github.com/FirebaseExtended/make-it-so-angular/main/README.md#set-up-and-run-the-app),
+  then these config values will be automatically populated into the file for you.
+
 * In `src/app/services/task.service.ts`, you can explore how to make a basic call to
   the Gemini API, including:
 
