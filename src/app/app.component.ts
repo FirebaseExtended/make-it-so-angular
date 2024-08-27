@@ -37,7 +37,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TaskWithSubtasks, Task, TaskService } from './services/task.service';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, take, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 
@@ -218,7 +218,7 @@ export class AppComponent {
     this.taskService
       .loadSubtasks(maintaskId)
       .then((subtasksObservable: any) => {
-        subtasksObservable.subscribe({
+        subtasksObservable.pipe(take(1)).subscribe({
           next: (subtasks: any) => {
             this.subtasks = subtasks.map((task: any) => ({
               task,
