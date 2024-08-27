@@ -37,7 +37,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TaskWithSubtasks, Task, TaskService } from './services/task.service';
-import { catchError, take, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 
@@ -211,7 +211,6 @@ export class AppComponent {
         });
         return [];
       }),
-      take(1),
     );
   }
 
