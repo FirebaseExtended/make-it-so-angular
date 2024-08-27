@@ -1,6 +1,7 @@
 # Make It So
 
-Welcome to the _Make It So_ sample app, an AI-powered web app for to-do lists. It's an [Angular](https://angular.io/) app built using the Gemini API and Firebase.
+Welcome to the _Make It So_ sample app, an AI-powered web app for to-do lists!
+It's an [Angular](https://angular.io/) app built using the Gemini API and Firebase.
 
 The [Gemini API](https://ai.google.dev/gemini-api) gives you access to Google's latest
 generative AI models – the Gemini family of multimodal models. This _Make It So_ web app
@@ -33,7 +34,8 @@ to store the to-do list items.
     (most importantly `apiKey`, `projectId`, and `appId`).
   * Find your Gemini API key (`gemini_api_key`).
 
-  Note that if you [run the sample app in IDX](https://github.com/FirebaseExtended/make-it-so-angular/main/README.md#set-up-and-run-the-app),
+  Note that if you
+  [run the sample app in IDX](https://github.com/FirebaseExtended/make-it-so-angular/main/README.md#set-up-and-run-the-app),
   then these config values will be automatically populated into the file for you.
 
 * In `src/app/services/task.service.ts`, you can explore how to make a basic call to
@@ -180,6 +182,6 @@ your Firebase project (as described below).
 ## Docs
 
 * [Firebase Support](https://firebase.google.com/support)
-* [Google AI Gemini API documentation](https://ai.google.dev/gemini-api/docs/quickstart?lang=node)
+* [Google AI Gemini API documentation](https://ai.google.dev/gemini-api/docs/quickstart?lang=web)
   (for experimentation and prototyping)
 * [Vertex AI in Firebase documentation](https://firebase.google.com/docs/vertex-ai) (for production apps)
