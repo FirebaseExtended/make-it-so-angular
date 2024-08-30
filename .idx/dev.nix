@@ -61,7 +61,11 @@
         npm = "pnpm install";
       };
       # Runs when the workspace is (re)started
-      onStart = {};
+      onStart = {
+         terraform = ''
+          terraform apply -parallelism=20 --auto-approve -compact-warnings
+        '';
+      };
     };
   };
 }
