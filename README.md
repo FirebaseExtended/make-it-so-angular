@@ -179,6 +179,21 @@ your Firebase project (as described below).
       * Delete references to `generativelanguage.googleapis.com`, including the
         `google_service_usage_consumer_quota_override` resource entry in `main.tf`.
 
+## Troubleshooting
+
+```
+Error when reading or editing Project "<project-id>": Get "https://cloudresourcemanager.googleapis.com/v1/projects/<project-id>?alt=json&prettyPrint=false":
+compute: Received 500
+```
+
+This is because authentication timed-out. To resolve,
+
+1. Open a new terminal
+1. Run `terraform apply --auto-approve` in the terminal, click continue when prompted again to login
+1. Wait till the command completes
+1. Reload the web preview if necessary
+
+
 ## Docs
 
 * [Firebase Support](https://firebase.google.com/support)
