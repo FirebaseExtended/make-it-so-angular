@@ -6,7 +6,7 @@
         "Web",
         "Firebase"
     ],
-    "icon": "https://www.gstatic.com/monospace/240513/logo_firebase.svg",
+    "icon_image_url": "https://www.gstatic.com/monospace/240513/logo_firebase.svg",
     "publisher": "Google LLC",
     "params": [
         {
