@@ -197,21 +197,26 @@ This error happens because authentication has timed-out. Here's how to resolve i
 Error loading Gemini API key. Please rerun Terraform with terraform apply --auto-approve"
 ```
 
-This error happens because Terraform failed to provision some resources during initialization, such as API keys. Here's how to resolve it:
+This error happens because Terraform failed to provision some resources
+during initialization, such as API keys. Here's how to resolve it:
 
 1.  In Project IDX, open a new terminal.
-1.  In the terminal, run `terraform apply --auto-approve`, and then click continue if prompted to log in.
+1.  In the terminal, run `terraform apply --auto-approve`, and then click
+    continue when prompted to log in.
 1.  Wait until the command succeeds.
 1.  Reload the web preview, if necessary.
 
 ```
-Check Firestore permissions in Firebase Console
+Check Firestore permissions in Firebase Console: link
 ```
 
-This error happens when Firestore rules are blocking requests from your app.
+This error happens because
+[Firestore security rules](https://firebase.google.com/docs/firestore/security/get-started)
+are blocking requests from your app.  Here's how to resolve it:
 
-1.  Go to Firebase Console following the link provided.
-1.  Check that the rules is what you expect. In particular, `timestamp.date` should be in the future.
+1.  Go to the Firebase console using the link provided in the error message.
+1.  Check that the security rules are what you expect. In particular,
+    `timestamp.date` should be in the future.
 1.  Reload the web preview, if necessary.
 
 ## Docs
