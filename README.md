@@ -186,13 +186,33 @@ Error when reading or editing Project "<project-id>": Get "https://cloudresource
 compute: Received 500
 ```
 
-This is because authentication timed-out. To resolve,
+This error happens because authentication has timed-out. Here's how to resolve it:
 
-1. Open a new terminal
-1. Run `terraform apply --auto-approve` in the terminal, click continue when prompted again to login
-1. Wait till the command completes
-1. Reload the web preview if necessary
+1.  In Project IDX, open a new terminal.
+1.  In the terminal, run `terraform apply --auto-approve`, and then click continue when prompted to log in.
+1.  Wait until the command succeeds.
+1.  Reload the web preview, if necessary.
 
+```
+Error loading Gemini API key. Please rerun Terraform with terraform apply --auto-approve"
+```
+
+This error happens because Terraform failed to provision some resources during initialization, such as API keys. Here's how to resolve it:
+
+1.  In Project IDX, open a new terminal.
+1.  In the terminal, run `terraform apply --auto-approve`, and then click continue if prompted to log in.
+1.  Wait until the command succeeds.
+1.  Reload the web preview, if necessary.
+
+```
+Check Firestore permissions in Firebase Console
+```
+
+This error happens when Firestore rules are blocking requests from your app.
+
+1.  Go to Firebase Console following the link provided.
+1.  Check that the rules is what you expect. In particular, `timestamp.date` should be in the future.
+1.  Reload the web preview, if necessary.
 
 ## Docs
 
