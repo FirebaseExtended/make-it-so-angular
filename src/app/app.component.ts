@@ -170,10 +170,10 @@ export class AppComponent {
     this.isLoading.set(false);
   }
 
-  handleError(error: any, userMessage: string): void {
+  handleError(error: any, userMessage: string, duration: number = 3000): void {
     console.error('Error:', error);
     this.snackBar.open(userMessage, 'Close', {
-      duration: 3000,
+      duration,
     });
   }
 
@@ -226,10 +226,11 @@ export class AppComponent {
             }));
           },
           error: (error: any) => {
-            console.error('Error loading subtasks:', error);
-            this.snackBar.open('Error loading subtasks', 'Close', {
-              duration: 3000,
-            });
+            if (error.message.indexOf('Missing or insufficient permissions') >= 0) {
+              this.handleError(error, 'Check Firestore permissions in Firebase Console at: https://console.firebase.google.com/project/_/firestore/databases/-default-/rules', 10000);
+            } else {
+              this.handleError(error, 'Failed to load subtasks.');
+            }
           },
         });
       })
@@ -347,7 +348,11 @@ export class AppComponent {
       this.openEditor(newTask);
     } catch (error) {
       if (error instanceof GoogleGenerativeAIFetchError) {
-        this.handleError(error, error.message);
+        if (error.message.indexOf('API key not valid') > 0) {
+          this.handleError(error, 'Error loading Gemini API key. Please rerun Terraform with `terraform apply --auto-approve`', 10000);
+        } else {
+          this.handleError(error, error.message);
+        }
       } else {
         this.handleError(error, 'Failed to generate main task.');
       }
