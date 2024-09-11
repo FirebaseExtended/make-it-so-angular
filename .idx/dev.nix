@@ -8,7 +8,7 @@
   packages = [
     pkgs.terraform
     pkgs.nodejs
-    pkgs.pnpm
+    pkgs.nodePackages.pnpm
   ];
 
   # Sets environment variables in the workspace
