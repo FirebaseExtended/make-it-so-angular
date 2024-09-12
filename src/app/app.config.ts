@@ -16,6 +16,7 @@
 
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { initializeApp, provideFirebaseApp, getApp } from '@angular/fire/app';
+// TODO: Recommended to use together with Vertex AI
 import {
   ReCaptchaEnterpriseProvider,
   initializeAppCheck,
@@ -36,6 +37,7 @@ export const appConfig: ApplicationConfig = {
     provideFirebaseApp(() =>
       initializeApp(environment.firebase), 
     ),
+    // TODO
     // Turn on app check for Vertex AI in Firebase
     // provideAppCheck(() => {
       // TODO: don't use debug token in prod
