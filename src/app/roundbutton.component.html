@@ -1,0 +1,8 @@
+<div>
+  <button mat-button (click)="onClick()" [class.subtask]="subtask === true" [class.maintask]="subtask === false">
+    <div class="flex gap-2 items-center">
+      <img [src]="checked ? '/assets/check.svg' : '/assets/unchecked.svg'">
+      {{title}}
+    </div>
+  </button>
+</div>

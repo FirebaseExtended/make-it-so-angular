@@ -1,0 +1,29 @@
+.task-card {
+  border-radius: 24px;
+}
+
+::ng-deep .mat-mdc-card-outlined {
+  --mdc-outlined-card-container-color: white;
+}
+
+.mat-mdc-card-outlined {
+  --mdc-outlined-card-container-color: white;
+}
+
+.mat-mdc-icon-button {
+  --mdc-icon-button-icon-size: 48px;
+  height: 48px !important;
+  width: 48px !important;
+}
+
+.deletebutton {
+  margin-bottom: 8px;
+}
+
+.generated-gemini {
+  font: 12px;
+  font-family: "Google Sans", "Helvetica Neue";
+  font-weight: 400;
+  line-height: 20px;
+  color: #1e88e5;
+}

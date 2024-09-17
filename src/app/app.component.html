@@ -15,260 +15,52 @@
 -->
 
 <div class="site-layout h-screen overflow-hidden">
-  <div class="h-full w-full py-10 flex bg-[#ffdf99] p-6">
-    <!-- Sidebar -->
-    <div class="w-12 h-full flex flex-col items-center py-4 rounded-lg mr-4">
-      <div
-        class="rounded-full w-12 h-12 bg-gradient-to-tl to-[#ffc403] from-[#e03700] flex items-center justify-center m-4 shadow-md shadow-[#ffd358]"
-      >
-        <mat-icon class="text-white font-extrabold">check</mat-icon>
-      </div>
-      <button
-        class="rounded-xl w-12 h-12 bg-gradient-to-tl to-[#1c7eff] from-[#90dbff] flex items-center justify-center m-4 shadow-md shadow-[#ffd358]"
-        title="New task"
-        (click)="this.generateMaintask()"
-      >
-        <mat-icon class="text-white font-extrabold">add_task</mat-icon>
-      </button>
-    </div>    
-
-    <!-- Main Content -->
-    <div class="flex flex-col w-full space-y-4 space-x-4 overflow-hidden">
-      <!-- Task Grid -->
-      <div class="container mx-auto px-4 h-full">
-        <div
-          class="w-full h-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-[#f6fafe] rounded-[40px] p-6 shadow-xl shadow-[#ffd358] overflow-auto"
-        >
-          @for (task of this.tasks; track task.maintask.id) {
-          <div
-            class="bg-[#f2f4fa] p-6 pt-0 rounded-[24px] relative min-w-80 mx-3 cursor-pointer max-h-[50%] overflow-y-auto overflow-x-hidden"
-            (click)="openEditor(task.maintask)"
-          >
-            <div class="sticky top-0 bg-[#f2f4fa] z-10 pb-2 mb-4 border-b-[#e4edff] border-b-2 pt-6">
-              <div class="flex justify-between items-center">
-                <div class="flex items-center">
-                  <mat-checkbox
-                    (click)="completeTask(task.maintask)"
-                    [checked]="task.maintask.completed"
-                    class="text-[#5A94E2]"
-                  ></mat-checkbox>
-                  <h3 class="ml-4 text-lg font-medium text-[#333]">
-                    {{ task.maintask.title }}
-                  </h3>
-                </div>
-                <div
-                  class="py-2 px-3 text-sm font-bold rounded-2xl"
-                  [ngClass]="{
-                    'bg-[#ffdad8] text-red-900 px-4':
-                      task.maintask.priority == 'high',
-                    'bg-[#ffdeaa] text-amber-900':
-                      task.maintask.priority == 'medium',
-                    'bg-[#b2f1c1] text-green-800 px-5':
-                      task.maintask.priority == 'low',
-                    'bg-gray-300 text-gray-700 px-4':
-                      task.maintask.priority == 'none'
-                  }"
-                >
-                  {{ task.maintask.priority | titlecase }}
-                </div>
-              </div>
-            </div>
-            <!-- Subtasks as list items inside the main task card -->
-            <ul class="mt-4 space-y-3">
-              @for (subtask of task.subtasks; track subtask.id) {
-              <li class="flex items-center">
-                <mat-checkbox
-                  (click)="completeTask(subtask)"
-                  [checked]="subtask.completed"
-                  class="text-gray-500"
-                ></mat-checkbox>
-                <p
-                  class="ml-2 text-gray-600 {{
-                    subtask.completed ? 'line-through' : ''
-                  }}"
-                >
-                  {{ subtask.title }}
-                </p>
-              </li>
-              }
-            </ul>
-          </div>
-          }
+  <div class="h-full w-full py-10 flex flex-col bg-[#e2f2fd] p-6">
+    <!-- Task Generation -->
+    <div class="w-full p-6 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative overflow-y-auto">
+      <form>
+        <div class="w-full flex gap-4 mb-4">
+          <app-checkboximage [src]="'/assets/location.png'" [checked]="formControls.locationSelected.value"
+            (onCheckedChanged)="onSelectLocationOrRoom()">
+          </app-checkboximage>
+          <app-checkboximage [src]="'/assets/room.png'" [checked]="!formControls.locationSelected.value"
+            (onCheckedChanged)="onSelectLocationOrRoom()">
+          </app-checkboximage>
         </div>
-      </div>
-    </div>
-
-    <!-- Task Editor -->
-    <div
-      class="w-full md:w-5/12 p-6 bg-[#f6fafe] transition-all duration-300 ease-in-out rounded-[40px] relative shadow-xl shadow-[#ffd358] overflow-y-auto max-h-full"
-    >
-      <div class="flex justify-between items-center pb-4">
-        <button
-          type="submit"
-          class="absolute top-2 right-8 bg-[#ffdf99] rounded-3xl w-24 h-12 flex items-center justify-center text-sm"
-          (click)="submit()"
-        >
-          Save
-        </button>
-        <button
-          (click)="deleteCurrentMainAndSubTasks()"
-          class="absolute top-2 right-36 bg-[#ffdbd0] text-[#3a0a00] rounded-full w-12 h-12 flex items-center justify-center pb-2 material-icons-outlined"
-        >
-          <mat-icon class="text-2xl">delete</mat-icon>
-        </button>
-      </div>
-      @if (isLoading()) {
-      <div
-        class="absolute inset-0 flex flex-col items-center justify-center bg-[#f7f8fa] z-50 rounded-3xl shadow-xl shadow-[#ffd358] p-10"
-      >
-        <div class="flex flex-col items-center justify-center">
-          <img src="../assets/gem_gemini.svg" />
-          <p class="text-gray-500 text-lg font-medium mt-4">
-            Generating suggested task...
-          </p>
-        </div>
-      </div>
-      }
-      <div class="overflow-y-auto max-h-full no-scrollbar">
-        <form [formGroup]="taskForm" (ngSubmit)="submit()">
-          <mat-form-field class="w-full mb-4 mt-16">
-            <mat-label>Title</mat-label>
-            <input
-              matInput
-              formControlName="title"
-              placeholder="Restock the fridge"
-            />
+        <div class="w-full  flex justify-between gap-4 mb-4">
+          <mat-form-field class="w-11/12">
+            <mat-label>Add a prompt</mat-label>
+            <input [formControl]="formControls.prompt" matInput placeholder="Grocery store trip" />
           </mat-form-field>
-          <div class="items-center mb-4">
-            <div class="flex flex-col items-start space-y-1 mb-4">
-              <label class="font-medium">Priority</label>
-              <mat-button-toggle-group formControlName="priority">
-                <mat-button-toggle value="high">High</mat-button-toggle>
-                <mat-button-toggle value="medium">Medium</mat-button-toggle>
-                <mat-button-toggle value="low">Low</mat-button-toggle>
-                <mat-button-toggle value="none">None</mat-button-toggle>
-              </mat-button-toggle-group>
-            </div>
-          </div>
-          @if(imagePreview()) {
-          <div class="mt-4">
-            <h3 class="font-medium">From image</h3>
-            <h4 class="text-slate-500">
-              Subtasks added from the following image
-            </h4>
-            <img
-              [src]="imagePreview()"
-              alt="Task Image"
-              class="rounded-2xl max-h-60 object-cover mt-2"
-            />
-          </div>
-          }
-
-          <div class="mt-6">
-            <h3 class="text-lg font-medium">Subtasks</h3>
-            <div class="flex items-center space-x-2 mb-4">
-              <input
-                matInput
-                [(ngModel)]="newSubtaskTitle"
-                [ngModelOptions]="{ standalone: true }"
-                placeholder="New subtask title"
-                class="w-full p-2 border rounded"
-              />
-              <button
-                (click)="
-                  addSubtask();
-                  $event.stopPropagation();
-                  $event.preventDefault()
-                "
-                class="border-2 border-blue-200 rounded-2xl p-2 text-[#3e5f90]"
-              >
-                +
-              </button>
-            </div>
-            <div class="flex items-center space-x-2 mb-4">
-              <div
-                (drop)="onFileDrop($event)"
-                (dragover)="onDragOver($event)"
-                class="drop-area"
-              >
-                <button
-                  (click)="
-                    moreSubtaskInput.click();
-                    $event.stopPropagation();
-                    $event.preventDefault()
-                  "
-                  class="text-sm border-2 border-[#4eabff] rounded-lg p-2 flex items-center space-x-2"
-                >
-                  <mat-icon class="text-[#3e5f90]"
-                    >add_photo_alternate</mat-icon
-                  >
-                  <span>From Image</span>
-                </button>
-                <input
-                  type="file"
-                  accept="image/*"
-                  (change)="handleFileInput($event)"
-                  hidden
-                  #moreSubtaskInput
-                />
-              </div>
-              <button
-                (click)="
-                  handleTitleInput();
-                  $event.stopPropagation();
-                  $event.preventDefault()
-                "
-                class="text-sm border-2 border-[#4eabff] rounded-lg p-2 flex items-center space-x-2"
-              >
-                <mat-icon class="text-[#3e5f90]"
-                  >format_list_bulleted_add</mat-icon
-                >
-                <span>From Title</span>
-              </button>
-            </div>
-
-            <ul class="mt-4 space-y-2">
-              @for (subtask of this.subtasks; track subtask.task.id) {
-              <li class="flex items-center">
-                <p class="ml-2">{{ subtask.task.title }}</p>
-                <button
-                  mat-icon-button
-                  [matMenuTriggerFor]="subtaskMenu"
-                  (click)="$event.stopPropagation(); $event.preventDefault()"
-                >
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #subtaskMenu="matMenu">
-                  <button
-                    mat-menu-item
-                    (click)="moveSubtaskOrder(subtask, 'up')"
-                  >
-                    <mat-icon class="text-gray-600 material-icons-outlined"
-                      >keyboard_arrow_up</mat-icon
-                    >
-                    Move order up
-                  </button>
-                  <button
-                    mat-menu-item
-                    (click)="moveSubtaskOrder(subtask, 'down')"
-                  >
-                    <mat-icon class="text-gray-600 material-icons-outlined"
-                      >keyboard_arrow_down</mat-icon
-                    >
-                    Move order down
-                  </button>
-                  <button mat-menu-item (click)="deleteSubtask(subtask)">
-                    <mat-icon class="text-gray-600 material-icons-outlined"
-                      >delete</mat-icon
-                    >
-                    Delete
-                  </button>
-                </mat-menu>
-              </li>
-              }
-            </ul>
-          </div>
-        </form>
+          <button mat-button class="mt-2" (click)="onGoClick()" [disabled]="!formControls.prompt.value">
+            Go
+          </button>
+        </div>
+        @if (isLoading()) {
+        <mat-spinner></mat-spinner>
+        } @else if (generatedTask) {
+        <app-task [task]="generatedTask" class="app-task" [canDelete]="false" [showGeneratedWithGemini]="true">
+        </app-task>
+        }
+        <div class="flex flex-row-reverse mt-6">
+          <button mat-button type="submit" [disabled]="!generatedTask" class="right-8 rounded-3xl w-36 text-md"
+            (click)="submit()">
+            Save
+          </button>
+          <button mat-stroked-button class="right-8 rounded-3xl w-36 mr-6 text-md" (click)="onClearClick()">
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="flex flex-col w-full mt-6 overflow-hidden">
+      <!-- Task Grid -->
+      <div
+        class="w-full grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 bg-[#fff] rounded-[40px] p-6 overflow-auto">
+        @for (task of this.tasks; track task.maintask.id) {
+        <app-task [task]="task" class="app-task" (onDelete)="deleteCurrentMainAndSubTasks($event)">
+        </app-task>
+        }
       </div>
     </div>
   </div>
