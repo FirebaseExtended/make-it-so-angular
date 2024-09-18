@@ -18,24 +18,26 @@
   <div class="h-full w-full py-10 flex flex-col bg-[#e2f2fd] p-6">
     <!-- Task Generation -->
     <div class="w-full p-6 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative overflow-y-auto">
-      <form>
         <div class="w-full flex gap-4 mb-4">
-          <app-checkboximage [src]="'/assets/location.png'" [checked]="formControls.locationSelected.value"
-            (onCheckedChanged)="onSelectLocationOrRoom()">
+          <app-checkboximage #location [src]="'/assets/location.png'" [checked]="formControls.locationSelected.value === true"
+            (onCheckedChanged)="onSelectLocation($event)">
           </app-checkboximage>
-          <app-checkboximage [src]="'/assets/room.png'" [checked]="!formControls.locationSelected.value"
-            (onCheckedChanged)="onSelectLocationOrRoom()">
+          <app-checkboximage #room [src]="'/assets/room.png'" [checked]="formControls.locationSelected.value === false"
+            (onCheckedChanged)="onSelectRoom($event)">
           </app-checkboximage>
         </div>
+        <form>
         <div class="w-full  flex justify-between gap-4 mb-4">
           <mat-form-field class="w-11/12">
             <mat-label>Add a prompt</mat-label>
-            <input [formControl]="formControls.prompt" matInput placeholder="Grocery store trip" />
+            <input [formControl]="formControls.prompt" matInput placeholder="Grocery store trip"
+              (ngModelChange)="promptChange($event)" />
           </mat-form-field>
           <button mat-button class="mt-2" (click)="onGoClick()" [disabled]="!formControls.prompt.value">
             Go
           </button>
         </div>
+        </form>
         @if (isLoading()) {
         <mat-spinner></mat-spinner>
         } @else if (generatedTask) {
@@ -43,25 +45,28 @@
         </app-task>
         }
         <div class="flex flex-row-reverse mt-6">
-          <button mat-button type="submit" [disabled]="!generatedTask" class="right-8 rounded-3xl w-36 text-md"
-            (click)="submit()">
+          <button mat-button [disabled]="!generatedTask" class="right-8 rounded-3xl w-36 text-md"
+            (click)="onSave()">
             Save
           </button>
           <button mat-stroked-button class="right-8 rounded-3xl w-36 mr-6 text-md" (click)="onClearClick()">
             Clear
           </button>
         </div>
-      </form>
     </div>
+    @if (this.tasks.length > 0) {
     <div class="flex flex-col w-full mt-6 overflow-hidden">
       <!-- Task Grid -->
       <div
         class="w-full grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 bg-[#fff] rounded-[40px] p-6 overflow-auto">
         @for (task of this.tasks; track task.maintask.id) {
-        <app-task [task]="task" class="app-task" (onDelete)="deleteCurrentMainAndSubTasks($event)">
+        <app-task [task]="task" class="app-task" (onDelete)="deleteCurrentMainAndSubTasks($event)"
+          (onTasksCompletedToggle)="onTasksCompleted($event)"
+        >
         </app-task>
         }
       </div>
     </div>
+    }
   </div>
 </div>

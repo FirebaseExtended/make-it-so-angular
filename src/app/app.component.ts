@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ChangeDetectorRef, Component, signal } from '@angular/core';
+import { ViewChild, ChangeDetectorRef, Component, signal } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import {
@@ -35,8 +35,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TaskWithSubtasks, Task, TaskService } from './services/task.service';
-import { catchError, map, switchMap, take, tap, filter } from 'rxjs/operators';
-import { Observable, forkJoin, EMPTY } from 'rxjs';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, forkJoin, from, EMPTY } from 'rxjs';
 import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 import { TaskComponent } from './task.component';
 import { CheckboximageComponent } from './checkboximage.component';
@@ -75,7 +75,7 @@ const HELP_ME_PLAN = 'Plan a trip to Greece';
 })
 export class AppComponent {
   readonly formControls = {
-    locationSelected: new FormControl(true, { nonNullable: true }),
+    locationSelected: new FormControl(true),
     prompt: new FormControl(HELP_ME_PLAN, {
       nonNullable: true,
       validators: Validators.required,
@@ -84,6 +84,12 @@ export class AppComponent {
   isLoading = signal(false);
   tasks: TaskWithSubtasks[] = [];
   generatedTask?: TaskWithSubtasks;
+
+  @ViewChild('location') locationImage! : CheckboximageComponent;
+  @ViewChild('room') roomImage! : CheckboximageComponent;
+
+  locationFile?: File;
+  roomFile?: File;
 
   constructor(
     public taskService: TaskService,
@@ -95,24 +101,33 @@ export class AppComponent {
     this.loadTasks().subscribe();
   }
 
+  async ngAfterViewInit() {
+    this.locationFile = await this.locationImage.getFile();
+    this.roomFile = await this.roomImage.getFile();
+  }
+
   async onGoClick() {
     await this.generateMaintask();
   }
 
-  onSelectLocationOrRoom() {
-    if (this.formControls.locationSelected.value) {
-      this.formControls.prompt.setValue(HELP_ME_CLEAN);
-    } else {
-      this.formControls.prompt.setValue(HELP_ME_PLAN);
-    }
-    this.formControls.locationSelected.setValue(
-      !this.formControls.locationSelected.value
-    );
+  onSelectLocation(unused: boolean) {
+    this.formControls.prompt.setValue(HELP_ME_PLAN);
+    this.formControls.locationSelected.setValue(true);
+  }
+
+  onSelectRoom(unused: boolean) {
+    this.formControls.prompt.setValue(HELP_ME_CLEAN);
+    this.formControls.locationSelected.setValue(false);
   }
 
   onClearClick() {
     this.generatedTask = undefined;
     this.formControls.prompt.setValue('');
+    this.formControls.locationSelected.setValue(null);
+  }
+
+  promptChange(val: any) {
+    this.formControls.locationSelected.setValue(null);
   }
 
   handleError(error: any, userMessage: string, duration: number = 3000): void {
@@ -124,9 +139,12 @@ export class AppComponent {
 
   loadTasks(): Observable<TaskWithSubtasks[]> {
     return this.taskService.tasks$.pipe(
-      filter((tasks: Task[]) => tasks.length !== 0),
       switchMap((tasks: Task[]) =>
-        forkJoin(
+      {
+        if (tasks.length === 0) {
+          return from(this.generateMaintask()).pipe(map((x) => []));
+        }
+        return forkJoin(
           tasks.map((task: Task) => {
             if (!task.parentId) {
               return this.taskService.loadSubtasks(task.id).pipe(
@@ -139,8 +157,8 @@ export class AppComponent {
             // tasks$ should only return main tasks, however we recevied one that is not.
             return EMPTY;
           })
-        )
-      ),
+        );
+      }),
       tap((tasks: TaskWithSubtasks[]) => {
         this.tasks = tasks;
         this.cdr.markForCheck();
@@ -159,7 +177,9 @@ export class AppComponent {
     this.isLoading.set(true);
     try {
       const title = this.formControls.prompt.value;
+      const file = this.formControls.locationSelected ? this.locationFile : this.roomFile;
       const generatedSubtasks = await this.taskService.generateSubtasks({
+        file,
         title: `Provide a list of tasks to ${title}`,
         existingSubtasks: [],
       });
@@ -205,7 +225,7 @@ export class AppComponent {
     }
   }
 
-  submit(): void {
+  onSave(): void {
     if (this.generatedTask) {
       this.taskService.addMaintaskWithSubtasks(
         this.generatedTask.maintask,
@@ -222,5 +242,11 @@ export class AppComponent {
       this.tasks.splice(index, 1);
     }
     this.taskService.deleteMaintaskAndSubtasks(task.maintask.id);
+  }
+
+  async onTasksCompleted(tasks: Task[]) {
+    tasks.forEach((task: Task) => {
+      this.taskService.updateTask(task);
+    });
   }
 }
