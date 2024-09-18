@@ -37,73 +37,72 @@
       >
         <div class="h-full flex flex-col justify-between">
           <div>
-          <div class="w-[90%] flex gap-12 justify-center mx-auto">
-            <app-checkboximage
-              #location
-              [src]="'/assets/location.png'"
-              [checked]="formControls.locationSelected.value === true"
-              (onCheckedChanged)="onSelectLocation($event)"
-            >
-            </app-checkboximage>
-            <app-checkboximage
-              #room
-              [src]="'/assets/room.png'"
-              [checked]="formControls.locationSelected.value === false"
-              (onCheckedChanged)="onSelectRoom($event)"
-            >
-            </app-checkboximage>
-          </div>
-          <form>
-            <div class="w-full flex justify-between gap-4 mb-12 p-4">
-              <mat-form-field class="w-11/12">
-                <mat-label>Add a prompt</mat-label>
-                <input
-                  [formControl]="formControls.prompt"
-                  matInput
-                  placeholder="Grocery store trip"
-                  (ngModelChange)="promptChange($event)"
-                />
-                <mat-hint>
-                  <span class="font-light block"
-                    >Update the prompt to generate a new list, like:</span
-                  >
-                  @if (this.formControls.locationSelected.value) {
-                  <span class="block"
-                    >Help me plan a trip to this location</span
-                  >
-                  } @else {
-                  <span class="block"
-                    >Provide a list of tasks to clean this room</span
-                  >
-                  }
-                </mat-hint>
-              </mat-form-field>
-              <button
-                mat-button
-                class="mt-2"
-                (click)="onGoClick()"
-                [disabled]="!formControls.prompt.value"
+            <div class="w-[90%] flex gap-12 justify-center mx-auto">
+              <app-checkboximage
+                #location
+                [src]="'/assets/location.png'"
+                [checked]="formControls.locationSelected.value === true"
+                (onCheckedChanged)="onSelectLocation($event)"
               >
-                Go
-              </button>
+              </app-checkboximage>
+              <app-checkboximage
+                #room
+                [src]="'/assets/room.png'"
+                [checked]="formControls.locationSelected.value === false"
+                (onCheckedChanged)="onSelectRoom($event)"
+              >
+              </app-checkboximage>
             </div>
+            <form>
+              <div class="w-full flex justify-between gap-4 mb-12 p-4">
+                <mat-form-field class="w-11/12">
+                  <mat-label>Add a prompt</mat-label>
+                  <input
+                    [formControl]="formControls.prompt"
+                    matInput
+                    [placeholder]="getCurrentPromptPlaceHolder()"
+                  />
+                  <mat-hint>
+                    <span class="font-light block"
+                      >Update the prompt to generate a new list, like:</span
+                    >
+                    @if (this.formControls.locationSelected.value) {
+                    <span class="block"
+                      >Help me plan a trip to this location</span
+                    >
+                    } @else {
+                    <span class="block"
+                      >Provide a list of tasks to clean this room</span
+                    >
+                    }
+                  </mat-hint>
+                </mat-form-field>
+                <button
+                  mat-button
+                  class="mt-2"
+                  (click)="onGoClick()"
+                  [disabled]="!formControls.prompt.value"
+                >
+                  Go
+                </button>
+              </div>
 
-            <!-- Generated Task -->
-            <div class="h-[30%] overflow-y-auto">
-              @if (isLoading()) {
-              <mat-spinner></mat-spinner>
-              } @else if (generatedTask) {
-              <app-task
-                [task]="generatedTask"
-                class="h-[240px] overflow-y-scroll"
-                [canDelete]="false"
-                [showGeneratedWithGemini]="true"
-              >
-              </app-task>
-              }
-            </div>
-          </form>
-        </div>
+              <!-- Generated Task -->
+              <div class="h-[30%] overflow-y-auto">
+                @if (isLoading()) {
+                <mat-spinner></mat-spinner>
+                } @else if (generatedTask) {
+                <app-task
+                  [task]="generatedTask"
+                  class="h-[240px] overflow-y-scroll"
+                  [canDelete]="false"
+                  [showGeneratedWithGemini]="true"
+                >
+                </app-task>
+                }
+              </div>
+            </form>
+          </div>
           <!-- Buttons at Bottom Right -->
           <div class="absolute bottom-0 right-0 p-6">
             <div class="flex flex-row-reverse gap-4">
@@ -117,10 +116,14 @@
               </button>
               <button
                 mat-stroked-button
-                class="rounded-3xl w-36 mr-6 text-md"
-                (click)="onClearClick()"
+                class="right-8 rounded-3xl w-36 mr-6 text-md"
+                (click)="onResetClick()"
+                [disabled]="
+                  generatedTask === undefined &&
+                  getCurrentPromptPlaceHolder() === formControls.prompt.value
+                "
               >
-                Clear
+                Reset
               </button>
             </div>
           </div>
@@ -150,7 +153,7 @@
           Generated by the Gemini API
         </div>
       </div>
-    }
+      }
     </div>
   </div>
 </div>
