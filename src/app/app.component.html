@@ -30,8 +30,7 @@
         <div class="w-full  flex justify-between gap-4 mb-4">
           <mat-form-field class="w-11/12">
             <mat-label>Add a prompt</mat-label>
-            <input [formControl]="formControls.prompt" matInput placeholder="Grocery store trip"
-              (ngModelChange)="promptChange($event)" />
+            <input [formControl]="formControls.prompt" matInput [placeholder]="getCurrentPromptPlaceHolder()" />
           </mat-form-field>
           <button mat-button class="mt-2" (click)="onGoClick()" [disabled]="!formControls.prompt.value">
             Go
@@ -49,8 +48,9 @@
             (click)="onSave()">
             Save
           </button>
-          <button mat-stroked-button class="right-8 rounded-3xl w-36 mr-6 text-md" (click)="onClearClick()">
-            Clear
+          <button mat-stroked-button class="right-8 rounded-3xl w-36 mr-6 text-md"
+              (click)="onResetClick()" [disabled]="generatedTask === undefined && getCurrentPromptPlaceHolder() === formControls.prompt.value">
+            Reset
           </button>
         </div>
     </div>

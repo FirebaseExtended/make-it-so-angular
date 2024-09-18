@@ -120,14 +120,17 @@ export class AppComponent {
     this.formControls.locationSelected.setValue(false);
   }
 
-  onClearClick() {
+  onResetClick() {
     this.generatedTask = undefined;
-    this.formControls.prompt.setValue('');
-    this.formControls.locationSelected.setValue(null);
+    this.formControls.prompt.setValue(this.getCurrentPromptPlaceHolder());
   }
 
-  promptChange(val: any) {
-    this.formControls.locationSelected.setValue(null);
+  getCurrentPromptPlaceHolder() {
+    if (this.formControls.locationSelected.value) {
+      return HELP_ME_PLAN;
+    } else {
+      return HELP_ME_CLEAN;
+    }
   }
 
   handleError(error: any, userMessage: string, duration: number = 3000): void {
