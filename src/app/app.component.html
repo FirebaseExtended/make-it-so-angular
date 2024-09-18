@@ -1,74 +1,156 @@
+<!--
+ Copyright 2024 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+ 
 <div class="site-layout h-screen overflow-hidden">
   <div class="h-full w-full py-4 flex flex-col bg-[#e2f2fd] md:px-12 lg:px-2">
     <!-- Icon and Title Section -->
-    <div class="flex items-center p-8 pl-[10%] justify-start ">
-      <img src="../assets/Spark_Gradient.png" alt="Icon" class="w-12 h-12 mr-4" />
+    <div class="flex items-center p-8 pl-[10%] justify-start">
+      <img
+        src="../assets/Spark_Gradient.png"
+        alt="Icon"
+        class="w-12 h-12 mr-4"
+      />
       <h1 class="text-3xl" style="font-family: 'Helvetica Neue', sans-serif">
         Planning with the Gemini API
       </h1>
     </div>
 
-    <div class="w-[80%] flex flex-col md:flex-row md:gap-6 h-[80%] justify-center items-center mx-auto">
+    <div
+      class="w-[80%] flex flex-col md:flex-row md:gap-6 h-[80%] justify-center items-center mx-auto"
+    >
       <!-- Task Generation -->
-      <div class="w-full md:w-2/5 p-6 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative h-full my-2 flex-col justify-between">
-        <form class="h-[90%] flex flex-col justify-between">
-          <div class="w-[85%] flex gap-12 justify-center mx-auto">
-            <app-checkboximage [src]="'/assets/location.png'" [checked]="formControls.locationSelected.value" (onCheckedChanged)="onSelectLocationOrRoom()">
+      <div
+        class="w-full md:w-2/5 p-6 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative h-full my-2 flex-col justify-between"
+      >
+        <div class="h-full flex flex-col justify-between">
+          <div>
+          <div class="w-[90%] flex gap-12 justify-center mx-auto">
+            <app-checkboximage
+              #location
+              [src]="'/assets/location.png'"
+              [checked]="formControls.locationSelected.value === true"
+              (onCheckedChanged)="onSelectLocation($event)"
+            >
             </app-checkboximage>
-            <app-checkboximage [src]="'/assets/room.png'" [checked]="!formControls.locationSelected.value" (onCheckedChanged)="onSelectLocationOrRoom()">
+            <app-checkboximage
+              #room
+              [src]="'/assets/room.png'"
+              [checked]="formControls.locationSelected.value === false"
+              (onCheckedChanged)="onSelectRoom($event)"
+            >
             </app-checkboximage>
           </div>
-          <div class="w-full flex justify-between gap-4 mb-12 p-4">
-            <mat-form-field class="w-11/12">
-              <mat-label>Add a prompt</mat-label>
-              <input [formControl]="formControls.prompt" matInput placeholder="Grocery store trip" />
-              <mat-hint>
-                <span class="font-light block">Update the prompt to generate a new list, like:</span>
-                @if (this.formControls.locationSelected.value) {
-                  <span class="block">Help me plan a trip to this location</span>
-                } @else {
-                  <span class="block">Provide a list of tasks to clean this room</span>
-                }
-              </mat-hint>
-            </mat-form-field>
-            <button mat-button class="mt-2" (click)="onGoClick()" [disabled]="!formControls.prompt.value">
-              Go
-            </button>
-          </div>
+          <form>
+            <div class="w-full flex justify-between gap-4 mb-12 p-4">
+              <mat-form-field class="w-11/12">
+                <mat-label>Add a prompt</mat-label>
+                <input
+                  [formControl]="formControls.prompt"
+                  matInput
+                  placeholder="Grocery store trip"
+                  (ngModelChange)="promptChange($event)"
+                />
+                <mat-hint>
+                  <span class="font-light block"
+                    >Update the prompt to generate a new list, like:</span
+                  >
+                  @if (this.formControls.locationSelected.value) {
+                  <span class="block"
+                    >Help me plan a trip to this location</span
+                  >
+                  } @else {
+                  <span class="block"
+                    >Provide a list of tasks to clean this room</span
+                  >
+                  }
+                </mat-hint>
+              </mat-form-field>
+              <button
+                mat-button
+                class="mt-2"
+                (click)="onGoClick()"
+                [disabled]="!formControls.prompt.value"
+              >
+                Go
+              </button>
+            </div>
 
-          <!-- Generated Task -->
-          <div class="h-[30%] overflow-y-auto">
-            @if (isLoading()) {
-            <mat-spinner></mat-spinner>
-            } @else if (generatedTask) {
-            <app-task [task]="generatedTask" class="app-task" [canDelete]="false" [showGeneratedWithGemini]="true">
-            </app-task>
-            }
+            <!-- Generated Task -->
+            <div class="h-[30%] overflow-y-auto">
+              @if (isLoading()) {
+              <mat-spinner></mat-spinner>
+              } @else if (generatedTask) {
+              <app-task
+                [task]="generatedTask"
+                class="app-task"
+                [canDelete]="false"
+                [showGeneratedWithGemini]="true"
+              >
+              </app-task>
+              }
+            </div>
+          </form>
+        </div>
+          <!-- Buttons at Bottom Right -->
+          <div class="p-6">
+            <div class="flex flex-row-reverse gap-4">
+              <button
+                mat-button
+                [disabled]="!generatedTask"
+                class="right-8 rounded-3xl w-36 text-md"
+                (click)="onSave()"
+              >
+                Save
+              </button>
+              <button
+                mat-stroked-button
+                class="rounded-3xl w-36 mr-6 text-md"
+                (click)="onClearClick()"
+              >
+                Clear
+              </button>
+            </div>
           </div>
-        </form>
-                  <!-- Buttons at Bottom Right -->
-                  <div class="p-6">
-                    <div class="flex flex-row-reverse">
-                      <button mat-button type="submit" [disabled]="!generatedTask" class="rounded-3xl w-36 text-md" (click)="submit()">
-                        Save
-                      </button>
-                      <button mat-stroked-button class="rounded-3xl w-36 mr-6 text-md" (click)="onClearClick()">
-                        Clear
-                      </button>
-                    </div>
-                  </div>
+        </div>
       </div>
-
       <!-- Task Grid -->
-      <div class="w-full md:w-3/5 p-6 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative overflow-auto h-full my-2">
-        <div class="w-full grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 bg-[#fff] rounded-[40px] p-6 overflow-y-auto min-h-[90%]">
+      <!-- @if (this.tasks.length > 0) { -->
+      <div
+        class="w-full md:w-3/5 p-6 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative overflow-auto h-full my-2"
+      >
+        <div
+          class="w-full grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 bg-[#fff] rounded-[40px] p-6 overflow-y-auto min-h-[90%]"
+        >
           @for (task of this.tasks; track task.maintask.id) {
-          <app-task [task]="task" class="app-task max-h-[360px]" (onDelete)="deleteCurrentMainAndSubTasks($event)">
+          <app-task
+            [task]="task"
+            class="app-task"
+            (onDelete)="deleteCurrentMainAndSubTasks($event)"
+            (onTasksCompletedToggle)="onTasksCompleted($event)"
+          >
           </app-task>
           }
         </div>
-        <div class="flex flex-row-reverse sticky font-extralight bottom-0 right-0 p-6 text-sm text-[#1e88e5]">Generated by the Gemini API</div>
+        <div
+          class="absolute font-extralight bottom-0 right-0 p-6 text-sm text-[#1e88e5]"
+        >
+          Generated by the Gemini API
+        </div>
       </div>
+    <!-- } -->
     </div>
   </div>
 </div>

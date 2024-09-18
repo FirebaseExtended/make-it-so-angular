@@ -1,7 +1,8 @@
 import {
   EventEmitter,
-  Input,
-  Output,
+  signal,
+  input,
+  output,
   ChangeDetectionStrategy,
   Component,
 } from '@angular/core';
@@ -39,25 +40,32 @@ import { MatDividerModule } from '@angular/material/divider';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskComponent {
-  @Input() task!: TaskWithSubtasks;
+  task = input(undefined as TaskWithSubtasks | undefined);
+  canDelete = input(true);
+  showGeneratedWithGemini = input(false);
 
-  @Input() canDelete: boolean = true;
-  @Input() showGeneratedWithGemini = false;
-  @Output() onDelete = new EventEmitter<TaskWithSubtasks>();
-  @Output() onTaskCompletedToggle = new EventEmitter<Task>();
+  onDelete = output<TaskWithSubtasks>();
+  onTasksCompletedToggle = output<Task[]>();
 
   onCheckedChanged(newValue: boolean, task: Task) {
     task.completed = newValue;
+    this.onTasksCompletedToggle.emit([task]);
   }
 
-  onCheckedChangeMainTask(newValue: boolean, task: TaskWithSubtasks) {
-    task.maintask.completed = newValue;
-    task.subtasks.forEach((subtask: Task) => {
-      subtask.completed = newValue;
-    });
+  onCheckedChangeMainTask(newValue: boolean, task?: TaskWithSubtasks) {
+    if (task) {
+      task.maintask.completed = newValue;
+      task.subtasks.forEach((subtask: Task) => {
+        subtask.completed = newValue;
+      });
+      this.onTasksCompletedToggle.emit([task.maintask, ...task.subtasks]);
+    }
   }
 
   onDeleteClicked() {
-    this.onDelete.emit(this.task);
+    const task = this.task();
+    if (task) {
+      this.onDelete.emit(task);
+    }
   }
 }

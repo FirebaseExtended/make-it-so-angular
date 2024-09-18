@@ -24,7 +24,8 @@ import {
 } from '@angular/fire/auth';
 import { getApp } from '@angular/fire/app';
 
-import { Observable, BehaviorSubject } from 'rxjs';
+import {switchMap,tap, take} from 'rxjs/operators';
+import { Observable,of, Subject } from 'rxjs';
 import {
   doc,
   Firestore,
@@ -32,6 +33,7 @@ import {
   collection,
   deleteDoc,
   collectionData,
+  collectionCount,
   query,
   orderBy,
   Timestamp,
@@ -82,7 +84,7 @@ export class TaskService {
   private experimentModel = this.genAI.getGenerativeModel(MODEL_CONFIG);
 
   user$ = authState(this.auth);
-  public tasksSubject = new BehaviorSubject<Task[]>([]);
+  public tasksSubject = new Subject<Task[]>();
   tasks$ = this.tasksSubject.asObservable(); // Observable for components to subscribe to
   currentUser: User | null = null;
   public localUid: string | null = null;
@@ -132,8 +134,25 @@ export class TaskService {
       where('priority', '!=', 'null'),
       orderBy('createdTime', 'desc')
     );
+    return this.loadTaskCount().pipe(
+      take(1),
+      switchMap(
+        taskCount => {
+          if (taskCount === 0) {
+            return of([] as Task[]);
+          }
+          return collectionData(taskQuery, { idField: 'id' }) as Observable<Task[]>;
+        }
+      ),
+    );
+  }
 
-    return collectionData(taskQuery, { idField: 'id' }) as Observable<Task[]>;
+  loadTaskCount(): Observable<number> {
+    const taskQuery = query(
+      collection(this.firestore, 'todos'),
+      where('priority', '!=', 'null'),
+    );
+    return collectionCount(taskQuery, { idField: 'id' });
   }
 
   loadSubtasks(maintaskId: string): Observable<Task[]> {
@@ -162,6 +181,19 @@ export class TaskService {
     return {
       inlineData: { data: chew, mimeType: file.type },
     } as any;
+  }
+
+
+  async updateTask(
+    maintask: Task,
+  ): Promise<void> {
+    try {
+      const maintaskRef = doc(this.firestore, 'todos', maintask.id);
+      await setDoc(maintaskRef, maintask, { merge: true });
+    } catch (error) {
+      console.error('Error updating task', error);
+      throw error;
+    }
   }
 
   async generateSubtasks(input: {

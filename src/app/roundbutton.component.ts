@@ -1,7 +1,7 @@
 import {
   EventEmitter,
-  Input,
-  Output,
+  input,
+  output,
   ChangeDetectionStrategy,
   Component,
 } from '@angular/core';
@@ -17,10 +17,10 @@ import { MatButtonModule } from '@angular/material/button';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoundbuttonComponent {
-  @Input() checked = false;
-  @Input() title = '';
-  @Input() subtask = false;
-  @Output() onCheckedChanged = new EventEmitter<boolean>();
+  checked = input(false);
+  title = input('');
+  subtask = input(false);
+  onCheckedChanged = output<boolean>();
 
   onClick() {
     this.onCheckedChanged.emit(!this.checked);
