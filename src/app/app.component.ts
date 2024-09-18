@@ -33,11 +33,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { TaskWithSubtasks, Task, TaskService } from './services/task.service';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { Observable, forkJoin, from, EMPTY } from 'rxjs';
-import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 import { TaskComponent } from './task.component';
 import { CheckboximageComponent } from './checkboximage.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -53,7 +52,7 @@ const HELP_ME_PLAN = 'Plan a trip to Greece';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSnackBarModule,
+    MatSnackBarModule, // Do not remove: used by service.
     MatButtonModule,
     MatMenuModule,
     MatChipsModule,
@@ -93,8 +92,7 @@ export class AppComponent {
 
   constructor(
     public taskService: TaskService,
-    private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -133,11 +131,8 @@ export class AppComponent {
     }
   }
 
-  handleError(error: any, userMessage: string, duration: number = 3000): void {
-    console.error('Error:', error);
-    this.snackBar.open(userMessage, 'Close', {
-      duration,
-    });
+  handleError(error: any, userMessage?: string, duration: number = 3000): void {
+    this.taskService.handleError(error, userMessage, duration);
   }
 
   loadTasks(): Observable<TaskWithSubtasks[]> {
@@ -167,10 +162,7 @@ export class AppComponent {
         this.cdr.markForCheck();
       }),
       catchError((error: any) => {
-        console.error('Error loading tasks:', error);
-        this.snackBar.open('Error loading data', 'Close', {
-          duration: 3000,
-        });
+        this.handleError(error, 'Error loading tasks');
         return [];
       })
     );
@@ -210,19 +202,7 @@ export class AppComponent {
       );
       this.generatedTask = { maintask, subtasks };
     } catch (error) {
-      if (error instanceof GoogleGenerativeAIFetchError) {
-        if (error.message.indexOf('API key not valid') > 0) {
-          this.handleError(
-            error,
-            'Error loading Gemini API key. Please rerun Terraform with `terraform apply --auto-approve`',
-            10000
-          );
-        } else {
-          this.handleError(error, error.message);
-        }
-      } else {
-        this.handleError(error, 'Failed to generate main task.');
-      }
+      this.handleError(error, 'Failed to generate main task.');
     } finally {
       this.isLoading.set(false);
     }

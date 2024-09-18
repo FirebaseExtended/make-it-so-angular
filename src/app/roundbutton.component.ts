@@ -20,6 +20,7 @@ export class RoundbuttonComponent {
   checked = input(false);
   title = input('');
   subtask = input(false);
+  disabled = input(false);
   onCheckedChanged = output<boolean>();
 
   onClick() {

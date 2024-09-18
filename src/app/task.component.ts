@@ -47,17 +47,17 @@ export class TaskComponent {
   onDelete = output<TaskWithSubtasks>();
   onTasksCompletedToggle = output<Task[]>();
 
-  onCheckedChanged(newValue: boolean, task: Task) {
-    task.completed = newValue;
-    this.onTasksCompletedToggle.emit([task]);
+  onCheckedChanged(subtask: Task) {
+    subtask.completed = !subtask.completed;
+    this.onTasksCompletedToggle.emit([subtask]);
   }
 
-  onCheckedChangeMainTask(newValue: boolean, task?: TaskWithSubtasks) {
+  onCheckedChangeMainTask(task?: TaskWithSubtasks) {
     if (task) {
-      task.maintask.completed = newValue;
       task.subtasks.forEach((subtask: Task) => {
-        subtask.completed = newValue;
+        subtask.completed = !task.maintask.completed;
       });
+      task.maintask.completed = !task.maintask.completed;
       this.onTasksCompletedToggle.emit([task.maintask, ...task.subtasks]);
     }
   }

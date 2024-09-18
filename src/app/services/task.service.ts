@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { inject, Injectable } from '@angular/core';
+import { NgZone, inject, Injectable } from '@angular/core';
 import {
   Auth,
   authState,
@@ -23,9 +23,10 @@ import {
   User,
 } from '@angular/fire/auth';
 import { getApp } from '@angular/fire/app';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-import {switchMap,tap, take} from 'rxjs/operators';
-import { Observable,of, Subject } from 'rxjs';
+import { switchMap, tap, take, catchError } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
 import {
   doc,
   Firestore,
@@ -39,6 +40,7 @@ import {
   Timestamp,
   where,
 } from '@angular/fire/firestore';
+import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 import { v4 as uuidv4 } from 'uuid';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { environment } from '../../environments/environments';
@@ -89,7 +91,7 @@ export class TaskService {
   currentUser: User | null = null;
   public localUid: string | null = null;
 
-  constructor() {
+  constructor(private snackBar: MatSnackBar, private zone: NgZone) {
     this.user$.subscribe((user: User | null) => {
       this.currentUser = user;
       if (user) {
@@ -124,6 +126,35 @@ export class TaskService {
       .catch((error) => console.error('Sign out error:', error));
   }
 
+  handleError(error: any, userMessage?: string, duration: number = 3000): void {
+    if (error instanceof GoogleGenerativeAIFetchError) {
+      if (error.message.indexOf('API key not valid') > 0) {
+        userMessage = 'Error loading Gemini API key. Please rerun Terraform with `terraform apply --auto-approve`';
+      } else {
+        userMessage = error.message;
+      }
+      duration = 10000;
+    }
+    if (error.message.indexOf('Missing or insufficient permissions') >= 0) {
+      userMessage =
+        'Error communicating with Firestore. Please rerun Terraform with `terraform apply --auto-approve`';
+      duration = 10000;
+    }
+    if (error.message.indexOf('The query requires an index') >= 0) {
+      // It happens when there are non zero number of tasks.
+      return;
+    }
+
+    console.error('Error:', error);
+    this.zone.run(() => {
+      this.snackBar.open(userMessage || error.message, 'Close', {
+        duration,
+        verticalPosition: 'top',
+        horizontalPosition: 'center',
+      });
+    });
+  }
+
   private generateLocalUid(): string {
     return 'local-' + uuidv4();
   }
@@ -136,21 +167,25 @@ export class TaskService {
     );
     return this.loadTaskCount().pipe(
       take(1),
-      switchMap(
-        taskCount => {
-          if (taskCount === 0) {
-            return of([] as Task[]);
-          }
-          return collectionData(taskQuery, { idField: 'id' }) as Observable<Task[]>;
+      switchMap((taskCount) => {
+        if (taskCount === 0) {
+          return of([] as Task[]);
         }
-      ),
+        return collectionData(taskQuery, { idField: 'id' }) as Observable<
+          Task[]
+        >;
+      }),
+      catchError((error: Error) => {
+        this.handleError(error);
+        return [];
+      })
     );
   }
 
   loadTaskCount(): Observable<number> {
     const taskQuery = query(
       collection(this.firestore, 'todos'),
-      where('priority', '!=', 'null'),
+      where('priority', '!=', 'null')
     );
     return collectionCount(taskQuery, { idField: 'id' });
   }
@@ -183,15 +218,12 @@ export class TaskService {
     } as any;
   }
 
-
-  async updateTask(
-    maintask: Task,
-  ): Promise<void> {
+  async updateTask(maintask: Task): Promise<void> {
     try {
       const maintaskRef = doc(this.firestore, 'todos', maintask.id);
       await setDoc(maintaskRef, maintask, { merge: true });
     } catch (error) {
-      console.error('Error updating task', error);
+      this.handleError(error, 'Error updating task');
       throw error;
     }
   }
@@ -233,7 +265,7 @@ export class TaskService {
       const response = await result.response.text();
       return JSON.parse(response);
     } catch (error) {
-      console.error('Failed to generate subtasks', error);
+      this.handleError(error, 'Failed to generate subtasks');
       throw error;
     }
   }
@@ -268,7 +300,10 @@ export class TaskService {
         await setDoc(subtaskRef, newSubtask);
       }
     } catch (error) {
-      console.error('Error adding main task and subtasks to Firestore', error);
+      this.handleError(
+        error,
+        'Error adding main task and subtasks to Firestore'
+      );
     }
   }
 
@@ -276,20 +311,24 @@ export class TaskService {
     try {
       const subtasksObservable = this.loadSubtasks(maintaskId);
 
-      subtasksObservable.subscribe(async (subtasks) => {
-        for (let subtask of subtasks) {
-          const subtaskRef = doc(this.firestore, 'todos', subtask.id);
-          await deleteDoc(subtaskRef);
-        }
+      subtasksObservable
+        .pipe(
+          catchError((error: Error) => {
+            this.handleError(error);
+            return of([]);
+          })
+        )
+        .subscribe(async (subtasks) => {
+          for (let subtask of subtasks) {
+            const subtaskRef = doc(this.firestore, 'todos', subtask.id);
+            await deleteDoc(subtaskRef);
+          }
 
-        const maintaskRef = doc(this.firestore, 'todos', maintaskId);
-        await deleteDoc(maintaskRef);
-      });
+          const maintaskRef = doc(this.firestore, 'todos', maintaskId);
+          await deleteDoc(maintaskRef);
+        });
     } catch (error) {
-      console.error(
-        'Error deleting main task and subtasks from Firestore',
-        error
-      );
+      this.handleError(error);
     }
   }
 }
