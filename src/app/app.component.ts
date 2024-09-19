@@ -173,28 +173,27 @@ export class AppComponent {
     try {
       const title = this.formControls.prompt.value;
       const file = this.formControls.locationSelected.value ? this.locationFile : this.roomFile;
-      const generatedSubtasks = await this.taskService.generateSubtasks({
+      const { title: generatedTitle, subtasks: generatedSubtasks } = await this.taskService.generateTask({
         file,
-        title: `Provide a list of tasks to ${title} specific to the ${file} image file`,
-        existingSubtasks: [],
+        prompt: `Generate a title and list of tasks for ${title} using the ${file?.name} image provided.`,
       });
       const newTaskRef = this.taskService.createTaskRef();
       const maintask: Task = {
         id: newTaskRef.id,
-        title: title,
+        title: generatedTitle,
         completed: false,
         owner: this.taskService.currentUser?.uid || this.taskService.localUid!,
         createdTime: Timestamp.fromDate(new Date()),
         priority: 'none',
       };
-      const subtasks = generatedSubtasks.subtasks?.map(
-        (generatedSubtask: { order: number; title: string }) => {
+      const subtasks = generatedSubtasks?.map(
+        (generatedSubtask, i) => {
           return {
             id: this.taskService.createTaskRef().id,
-            title: generatedSubtask.title,
+            title: generatedSubtask,
             completed: false,
             parentId: newTaskRef.id,
-            order: generatedSubtask.order,
+            order: i,
             owner: maintask.owner,
             createdTime: maintask.createdTime,
           };

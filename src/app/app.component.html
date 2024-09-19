@@ -57,11 +57,11 @@
               <div class="w-full flex justify-between gap-4 mb-4 p-4">
                 <mat-form-field class="w-11/12 mb-8" appearance="outline">
                   <mat-label>Add a prompt</mat-label>
-                  <input
+                  <textarea
                     [formControl]="formControls.prompt"
                     matInput
                     [placeholder]="getCurrentPromptPlaceHolder()"
-                  />
+                  ></textarea>
                   <!-- Adding margin-bottom to the mat-hint to create space -->
                   <mat-hint>
                     <span class="font-light block"
