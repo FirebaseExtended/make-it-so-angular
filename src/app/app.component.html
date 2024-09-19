@@ -14,8 +14,8 @@
  limitations under the License.
 -->
 
-<div class="site-layout h-screen overflow-hidden">
-  <div class="h-full w-full py-4 flex flex-col bg-[#e2f2fd] md:px-12 lg:px-2">
+<div class="site-layout h-screen overflow-scroll">
+  <div class="h-full w-full py-4 flex flex-col md:px-12 lg:px-2 mb-8">
     <!-- Icon and Title Section -->
     <div class="flex items-center p-8 pl-[10%] justify-start">
       <img
@@ -29,13 +29,13 @@
     </div>
 
     <div
-      class="w-[80%] flex flex-col md:flex-row md:gap-6 h-[80%] justify-center items-center mx-auto"
+      class="w-[80%] flex flex-col md:flex-row md:gap-6 h-[80%] justify-center items-center mx-auto min-h-[600px] md:min-h-[600px]"
     >
       <!-- Task Generation -->
       <div
-        class="w-full md:w-2/5 p-6 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative h-full my-2 flex-col justify-between"
+        class="w-full md:w-2/5 p-6 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative h-full my-2 flex flex-col justify-between overflow-y-scroll"
       >
-        <div class="h-full flex flex-col justify-between">
+        <div class="flex-grow flex flex-col justify-between">
           <div>
             <div class="w-[90%] flex gap-12 justify-center mx-auto">
               <app-checkboximage
@@ -54,14 +54,15 @@
               </app-checkboximage>
             </div>
             <form>
-              <div class="w-full flex justify-between gap-4 mb-12 p-4">
-                <mat-form-field class="w-11/12" appearance="outline">
+              <div class="w-full flex justify-between gap-4 mb-4 p-4">
+                <mat-form-field class="w-11/12 mb-8" appearance="outline">
                   <mat-label>Add a prompt</mat-label>
                   <input
                     [formControl]="formControls.prompt"
                     matInput
                     [placeholder]="getCurrentPromptPlaceHolder()"
                   />
+                  <!-- Adding margin-bottom to the mat-hint to create space -->
                   <mat-hint>
                     <span class="font-light block"
                       >Update the prompt to generate a new list, like:</span
@@ -86,80 +87,79 @@
                   Go
                 </button>
               </div>
-
-              <!-- Generated Task -->
-              <div class="h-[30%] overflow-y-auto">
-                @if (isLoading()) {
-                <mat-spinner></mat-spinner>
-                } @else if (generatedTask) {
-                <app-task
-                  [task]="generatedTask"
-                  class="h-[240px] overflow-y-scroll"
-                  [canDelete]="false"
-                  [showGeneratedWithGemini]="true"
-                >
-                </app-task>
-                }
-              </div>
             </form>
           </div>
-          <!-- Buttons at Bottom Right -->
-          <div class="absolute bottom-0 right-0 py-6">
-            <div class="flex flex-row-reverse gap-4">
-              <button
-                mat-button
-                [disabled]="!generatedTask"
-                class="right-8 w-36 text-md"
-                (click)="onSave()"
-              >
-                Save
-              </button>
-              <button
-                mat-stroked-button
-                class="right-8 w-36 text-md"
-                (click)="onResetClick()"
-                [disabled]="
-                  generatedTask === undefined &&
-                  getCurrentPromptPlaceHolder() === formControls.prompt.value
-                "
-              >
-                Reset
-              </button>
-            </div>
+
+          <!-- Generated Task -->
+          <div class="flex-grow mb-4 overflow-y-auto">
+            @if (isLoading()) {
+            <mat-spinner></mat-spinner>
+            } @else if (generatedTask) {
+            <app-task
+              [task]="generatedTask"
+              class="overflow-y-scroll"
+              [canDelete]="false"
+              [showGeneratedWithGemini]="true"
+            >
+            </app-task>
+            }
+          </div>
+        </div>
+        
+        <!-- Buttons at Bottom -->
+        <div class="py-4 px-4 w-full">
+          <div class="flex flex-row gap-4 w-full justify-end">
+            <button
+              mat-button
+              [disabled]="!generatedTask"
+              class="w-36 text-md"
+              (click)="onSave()"
+            >
+              Save
+            </button>
+            <button
+              mat-stroked-button
+              class="w-36 text-md"
+              (click)="onResetClick()"
+              [disabled]="
+                generatedTask === undefined &&
+                getCurrentPromptPlaceHolder() === formControls.prompt.value
+              "
+            >
+              Reset
+            </button>
           </div>
         </div>
       </div>
+
       <!-- Task Grid -->
-<!-- Task Grid -->
-<!-- Task Grid -->
-@if (this.tasks.length > 0) {
-  <div
-    class="w-full md:w-3/5 p-4 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative overflow-auto h-full my-2"
-  >
-    <div
-      class="w-full grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 bg-[#fff] rounded-[40px] p-4 min-h-[90%]"
-    >
-      @for (task of this.tasks; track task.maintask.id) {
-      <app-task
-        [task]="task"
-        class="app-task"
-        (onDelete)="deleteCurrentMainAndSubTasks($event)"
-        (onTasksCompletedToggle)="onTasksCompleted($event)"
+      @if (this.tasks.length > 0) {
+      <div
+        class="w-full md:w-3/5 p-4 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative overflow-scroll h-full my-2"
       >
-      </app-task>
+        <div
+          class="w-full grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 bg-[#fff] rounded-[40px] p-4 min-h-[90%]"
+        >
+          @for (task of this.tasks; track task.maintask.id) {
+          <app-task
+            [task]="task"
+            class="h-[216px]"
+            (onDelete)="deleteCurrentMainAndSubTasks($event)"
+            (onTasksCompletedToggle)="onTasksCompleted($event)"
+          >
+          </app-task>
+          }
+        </div>
+
+        <!-- Sticky "Generated by the Gemini API" -->
+        <span
+          class="sticky bottom-0 right-0 px-6 text-sm text-[#1e88e5] font-extralight"
+          style="float: right;"
+        >
+          Generated by the Gemini API
+        </span>
+      </div>
       }
-    </div>
-
-    <!-- Sticky "Generated by the Gemini API" -->
-    <span
-      class="sticky bottom-0 right-0 px-6 text-sm text-[#1e88e5] font-extralight"
-      style="float: right;"
-    >
-      Generated by the Gemini API
-    </span>
-  </div>
-}
-
     </div>
   </div>
 </div>
