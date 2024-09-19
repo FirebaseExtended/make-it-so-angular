@@ -64,10 +64,20 @@ export type TaskWithSubtasks = {
   subtasks: Task[];
 };
 
+type GeneratedTasks = {
+  title: string;
+  subtasks: string[];
+}
+
 const MODEL_CONFIG = {
   model: 'gemini-1.5-flash',
-  generationConfig: { responseMimeType: 'application/json' },
-  systemInstruction: 'Keep TODO titles short, ideally within 7 words',
+  generationConfig: { responseMimeType: 'application/json'},
+  systemInstruction: `Keep task names short, ideally within 7 words. Use the following schema in your response ${
+    JSON.stringify({
+      title: "string",
+      subtasks: "string[]",
+    })
+  }. The substasks should follow logical order`,
 };
 
 @Injectable({
@@ -228,35 +238,20 @@ export class TaskService {
     }
   }
 
-  async generateSubtasks(input: {
+  async generateTask(input: {
     file?: File;
-    title: string;
-    existingSubtasks: string[];
-  }): Promise<any> {
-    const { file, title } = input;
+    prompt: string;
+  }): Promise<GeneratedTasks> {
+    const { file, prompt } = input;
 
-    if (!file && !title) {
+    if (!file && !prompt) {
       return {
+        title: "Please provide a prompt",
         subtasks: [],
       };
     }
 
     const imagePart = file ? await this.fileToGenerativePart(file) : '';
-    const prompt = `Break this task down into smaller pieces ${
-      title ? `main task "${title}" ` : ''
-    } ${
-      file ? 'also consider the image in the input.' : ''
-    } excluding these existing subtasks ${input.existingSubtasks.join(
-      '\n'
-    )}. The output should be in the format:
-    ${JSON.stringify({
-      subtasks: [
-        {
-          title: { type: 'string' },
-          order: { type: 'int' },
-        },
-      ],
-    })}.`;
 
     try {
       const result = await this.experimentModel.generateContent(
