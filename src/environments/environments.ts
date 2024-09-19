@@ -16,13 +16,15 @@
 
 export const environment = {
   firebase: {
-    apiKey: "AIzaSyC2xQ2jVeN4sOVodE7NLgjoZ1d9cJcdoc8",
-    authDomain: "fir-ai-angular.firebaseapp.com",
-    projectId: "fir-ai-angular",
-    storageBucket: "fir-ai-angular.appspot.com",
-    messagingSenderId: "104339401644",
-    appId: "1:104339401644:web:51a4bcf770e88f4b3d6809"
+    apiKey: 'API_KEY',
+    authDomain: 'PROJECT_ID.firebaseapp.com',
+    databaseURL: 'https://PROJECT_ID.firebaseio.com',
+    projectId: 'PROJECT_ID',
+    storageBucket: 'PROJECT_ID.appspot.com',
+    messagingSenderId: 'SENDER_ID',
+    appId: 'APP_ID',
+    measurementId: 'G-MEASUREMENT_ID',
   },
-  gemini_api_key: 'AIzaSyChG37sRup1_RXPCWSPsRU5XCaBNPW7xB0',
+  gemini_api_key: 'your_api_key',
   debug_token: ''
 };
