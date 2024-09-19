@@ -172,10 +172,10 @@ export class AppComponent {
     this.isLoading.set(true);
     try {
       const title = this.formControls.prompt.value;
-      const file = this.formControls.locationSelected ? this.locationFile : this.roomFile;
+      const file = this.formControls.locationSelected.value ? this.locationFile : this.roomFile;
       const generatedSubtasks = await this.taskService.generateSubtasks({
         file,
-        title: `Provide a list of tasks to ${title}`,
+        title: `Provide a list of tasks to ${title} specific to the ${file} image file`,
         existingSubtasks: [],
       });
       const newTaskRef = this.taskService.createTaskRef();
