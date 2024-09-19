@@ -13,7 +13,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
 <div class="site-layout h-screen overflow-scroll">
   <div class="h-full w-full py-4 flex flex-col md:px-12 lg:px-2 mb-8">
     <!-- Icon and Title Section -->
@@ -33,26 +32,29 @@
     >
       <!-- Task Generation -->
       <div
-        class="w-full md:w-2/5 p-6 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative h-full my-2 flex flex-col justify-between overflow-y-scroll"
+        class="w-full md:w-2/5 p-4 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative h-full m-2 flex flex-col"
       >
-        <div class="flex-grow flex flex-col justify-between">
+        <!-- Content Wrapper (For flexbox space distribution) -->
+        <div class="flex-grow flex flex-col justify-between overflow-hidden">
+          <!-- Icon and Form Section (Top) -->
           <div>
+            <!-- Checkbox Images Section -->
             <div class="w-[90%] flex gap-12 justify-center mx-auto">
               <app-checkboximage
                 #location
                 [src]="'/assets/location.png'"
                 [checked]="formControls.locationSelected.value === true"
                 (onCheckedChanged)="onSelectLocation($event)"
-              >
-              </app-checkboximage>
+              ></app-checkboximage>
               <app-checkboximage
                 #room
                 [src]="'/assets/room.png'"
                 [checked]="formControls.locationSelected.value === false"
                 (onCheckedChanged)="onSelectRoom($event)"
-              >
-              </app-checkboximage>
+              ></app-checkboximage>
             </div>
+
+            <!-- Prompt Input Section -->
             <form>
               <div class="w-full flex justify-between gap-4 mb-4 p-4">
                 <mat-form-field class="w-11/12 mb-8" appearance="outline">
@@ -62,7 +64,6 @@
                     matInput
                     [placeholder]="getCurrentPromptPlaceHolder()"
                   />
-                  <!-- Adding margin-bottom to the mat-hint to create space -->
                   <mat-hint>
                     <span class="font-light block"
                       >Update the prompt to generate a new list, like:</span
@@ -79,35 +80,42 @@
                   </mat-hint>
                 </mat-form-field>
                 <button
-                  mat-button
-                  class="mt-2"
-                  (click)="onGoClick()"
-                  [disabled]="!formControls.prompt.value"
-                >
-                  Go
-                </button>
+                mat-button
+                class="mt-2 flex items-center gap-2"
+                (click)="onGoClick()"
+                [disabled]="!formControls.prompt.value"
+              >
+                <span class="flex items-center">
+                  <img
+                    src="../assets/spark_icon_24.svg"
+                    alt="Gemini Icon"
+                    class="w-6 h-6"
+                  />
+                  <span class="m-2">Go</span>
+                </span>
+              </button>
+              
+              
               </div>
             </form>
           </div>
 
-          <!-- Generated Task -->
-          <div class="flex-grow mb-4 overflow-y-auto">
+          <!-- Generated Task Section -->
+          <div class="flex-grow min-h-[150px] md:min-h-[216px] pb-4">
             @if (isLoading()) {
             <mat-spinner></mat-spinner>
             } @else if (generatedTask) {
             <app-task
               [task]="generatedTask"
-              class="overflow-y-scroll"
               [canDelete]="false"
               [showGeneratedWithGemini]="true"
-            >
-            </app-task>
+            ></app-task>
             }
           </div>
         </div>
-        
-        <!-- Buttons at Bottom -->
-        <div class="py-4 px-4 w-full">
+
+        <!-- Buttons Section -->
+        <div class="w-full">
           <div class="flex flex-row gap-4 w-full justify-end">
             <button
               mat-button
@@ -135,29 +143,28 @@
       <!-- Task Grid -->
       @if (this.tasks.length > 0) {
       <div
-        class="w-full md:w-3/5 p-4 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative overflow-scroll h-full my-2"
+        class="w-full md:w-3/5 p-4 bg-[#fff] transition-all duration-300 ease-in-out rounded-[40px] relative overflow-scroll h-full my-2 flex flex-col"
       >
+        <!-- Task Grid -->
         <div
-          class="w-full grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 bg-[#fff] rounded-[40px] p-4 min-h-[90%]"
+          class="flex-grow w-full grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6 bg-[#fff] rounded-[40px] p-4 min-h-[90%] overflow-y-scroll"
         >
           @for (task of this.tasks; track task.maintask.id) {
           <app-task
             [task]="task"
-            class="h-[216px]"
+            class="h-auto min-h-[216px] overflow-scroll"
             (onDelete)="deleteCurrentMainAndSubTasks($event)"
             (onTasksCompletedToggle)="onTasksCompleted($event)"
-          >
-          </app-task>
+          ></app-task>
           }
         </div>
 
-        <!-- Sticky "Generated by the Gemini API" -->
-        <span
-          class="sticky bottom-0 right-0 px-6 text-sm text-[#1e88e5] font-extralight"
-          style="float: right;"
+        <!-- Full-width Footer Bar -->
+        <div
+          class="w-full bg-[#fff] p-4 text-end text-sm font-extralight text-[#1e88e5] rounded-b-[40px]"
         >
           Generated by the Gemini API
-        </span>
+        </div>
       </div>
       }
     </div>
