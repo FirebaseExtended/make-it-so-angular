@@ -42,8 +42,8 @@ import { CheckboximageComponent } from './checkboximage.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ChangeDetectionStrategy } from '@angular/core';
 
-const HELP_ME_CLEAN = 'Clean this room';
-const HELP_ME_PLAN = 'Plan a trip to Greece';
+const HELP_ME_CLEAN = 'You are an organization expert transforming this place to be enjoyed by a child and a toddler who love superheroes';
+const HELP_ME_PLAN = 'You are a travel expert planning a trip here for 5 people including one toddler and my mom who is turning 50.';
 
 @Component({
   selector: 'app-root',
