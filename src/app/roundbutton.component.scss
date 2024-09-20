@@ -1,0 +1,13 @@
+::ng-deep .mat-mdc-button {
+  height: 48px;
+  --mdc-text-button-label-text-color: black;
+}
+
+::ng-deep .subtask {
+  --mdc-text-button-label-text-weight: 400;
+  --mdc-text-button-label-text-color: #333;
+}
+
+.maintask {
+  margin-bottom: 8px;
+}

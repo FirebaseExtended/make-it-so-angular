@@ -1,0 +1,14 @@
+<div>
+  <button
+    mat-button
+    (click)="onClick()"
+    [class.subtask]="subtask() === true"
+    [class.maintask]="subtask() === false"
+    [disabled]="disabled()"
+  >
+    <div class="flex gap-2 my-auto text-left">
+      <img [src]="checked() ? '/assets/check.svg' : '/assets/unchecked.svg'" class="flex-shrink-0">
+      <p class="break-words my-auto">{{ title() }}</p>
+    </div>
+  </button>
+</div>

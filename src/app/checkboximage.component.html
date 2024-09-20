@@ -1,0 +1,6 @@
+<mat-card class="checkboximage-card" (click)="onClick();$event.stopPropagation();">
+    <img mat-card-image [src]="src()">
+    <button mat-button class="checkboximage-button" (click)="onClick();$event.stopPropagation();">
+        <img [src]="checked() ? '/assets/image_check.svg' : '/assets/image_unchecked.svg'">
+    </button>
+</mat-card>
