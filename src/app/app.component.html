@@ -61,6 +61,7 @@
                     [formControl]="formControls.prompt"
                     matInput
                     [placeholder]="getCurrentPromptPlaceHolder()"
+                    rows="3"
                   ></textarea>
                   <mat-hint>
                     <span class="font-light block"
@@ -79,7 +80,7 @@
                 </mat-form-field>
                 <button
                 mat-button
-                class="mt-2 flex items-center gap-2"
+                class="mt-6 flex items-center gap-2"
                 (click)="onGoClick()"
                 [disabled]="!formControls.prompt.value"
               >

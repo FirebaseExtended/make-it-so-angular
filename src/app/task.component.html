@@ -17,7 +17,7 @@
     <mat-divider></mat-divider>
     }
 
-    <div class="mb-4">
+    <div class="my-4 flex flex-col gap-2">
       @for (subtask of task()?.subtasks; track subtask.id) {
       <app-roundbutton
         [subtask]="true"
@@ -26,7 +26,7 @@
         (onCheckedChanged)="onCheckedChanged(subtask)"
       ></app-roundbutton>
       }
-    </div>
+    </div>    
 
     @if (showGeneratedWithGemini()) {
     <div class="flex flex-row-reverse generated-gemini sticky font-light bottom-0 right-0 text-sm">
