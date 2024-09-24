@@ -17,11 +17,11 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { initializeApp, provideFirebaseApp, getApp } from '@angular/fire/app';
 // TODO: Recommended to use together with Vertex AI
-import {
-  ReCaptchaEnterpriseProvider,
-  initializeAppCheck,
-  provideAppCheck,
-} from '@angular/fire/app-check';
+// import {
+//   ReCaptchaEnterpriseProvider,
+//   initializeAppCheck,
+//   provideAppCheck,
+// } from '@angular/fire/app-check';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, provideFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environments';
