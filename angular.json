@@ -34,12 +34,7 @@
               }
             ],
             "styles": ["src/styles.scss"],
-            "scripts": [
-              {
-                "input": "src/bootstrap.js",
-                "inject": false
-              }
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {

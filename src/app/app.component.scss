@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,29 +21,11 @@
 }
 
 .mat-mdc-button {
-  --mdc-text-button-label-text-color: #0B57D0;
-  height: 48px;
-  border-radius: 0.75rem;
-}
-
-.with-bg {
-  --mdc-text-button-label-text-color: 181C20;
   background-color: #bbdefb;
+  height: 48px;
+  border-radius: 0.75rem
 }
 
 ::ng-deep .mdc-notched-outline__notch {
   border-right: none;
-}
-
-.banner {
-  border-radius: 24px;
-  border-color: #0B57D0;
-  border-width: 1px;
-  font-family: 'Google Sans Text';
-  font-size: 14px;
-}
-
-.link {
-  float:left;
-  margin: 12px;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,36 +14,17 @@
  * limitations under the License.
  */
 
-declare const window: any;
-
-export declare interface BootstrapData {
-  firebase: {
-    apiKey?: string;
-    authDomain?: string,
-    databaseURL?: string,
-    projectId?: string,
-    storageBucket?: string,
-    messagingSenderId?: string,
-    measurementId?: string,
-    appId?: string,
-  };
-  geminiApiKey?: string;
-  debugToken?: string;
-  viewCodeLink?: string;
-  viewCodeMessage?: string;
-}
-
-const bootstrapData = window['APP_TEMPLATE_BOOTSTRAP'] as BootstrapData;
-
-if (!bootstrapData) {
-  window.location.href = '/config.html';
-}
-
 export const environment = {
   firebase: {
-      ...bootstrapData?.firebase,
+    apiKey: 'API_KEY',
+    authDomain: 'PROJECT_ID.firebaseapp.com',
+    databaseURL: 'https://PROJECT_ID.firebaseio.com',
+    projectId: 'PROJECT_ID',
+    storageBucket: 'PROJECT_ID.appspot.com',
+    messagingSenderId: 'SENDER_ID',
+    appId: 'APP_ID',
+    measurementId: 'G-MEASUREMENT_ID',
   },
-  geminiApiKey: bootstrapData?.geminiApiKey || '',
-  viewCodeLink: bootstrapData?.viewCodeLink || '',
-  viewCodeMessage: bootstrapData?.viewCodeMessage || '',
+  gemini_api_key: 'your_api_key',
+  debug_token: ''
 };

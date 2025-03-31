@@ -71,7 +71,7 @@ resource "google_apikeys_key" "generativelanguage" {
   project = var.project
 
   name         = "gemini-api-key"
-  display_name = "Generative language Gemini API Key"
+  display_name = "Gemini API Key"
 
   restrictions {
     api_targets {
@@ -118,7 +118,7 @@ resource "google_firebaserules_release" "firestore" {
 resource "google_firebase_web_app" "example" {
   project = var.project
 
-  display_name = "Sample Firebase AI App"
+  display_name = "Make It So AI!"
 }
 
 data "google_firebase_web_app_config" "example" {
@@ -144,7 +144,7 @@ resource "local_file" "firebaserc" {
 }
 
 resource "local_file" "environment_ts" {
-  content = templatefile("${path.module}/src/bootstrap.js.tmpl", merge(
+  content = templatefile("${path.module}/src/environments/environments.ts.tmpl", merge(
     data.google_firebase_web_app_config.example,
     {
       project_id     = data.google_project.project.project_id,
@@ -152,5 +152,5 @@ resource "local_file" "environment_ts" {
       debug_token    = "" # Use local.uuid4 in when using Vertex AI in Firebase
     }
   ))
-  filename = "${path.module}/src/bootstrap.js"
+  filename = "${path.module}/src/environments/environments.ts"
 }

@@ -1,5 +1,5 @@
 <!--
- Copyright 2025 Google LLC
+ Copyright 2024 Google LLC
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,29 +16,19 @@
 <div class="site-layout h-screen overflow-scroll">
   <div class="w-full py-4 flex flex-col lg:px-12 mb-8">
     <!-- Icon and Title Section -->
-    @if (viewCodeLink) {
-    <div
-      class="w-full mr-8 flex items-center justify-center ">
-      <div class="pl-[10%] pr-[10%] banner font-light flex flex-col sm:flex-row items-center">
-        <img src="assets/link.svg" class="link">
-        <span>{{viewCodeMessage}}</span>
-        <a mat-button class="m-1" [href]="viewCodeLink" target="_blank" rel="noopener">Create Workspace</a>
-      </div>
-    </div>
-    }
-    <div class="flex items-center p-6 pb-0 pl-[10%] justify-start">
+    <div class="flex items-center p-8 pl-[10%] justify-start">
       <img
-        src="../assets/gemini_logo.svg"
+        src="../assets/Spark_Gradient.png"
         alt="Icon"
         class="w-12 h-12 mr-4"
       />
-      <h1 class="text-2xl md:text-3xl">
+      <h1 class="text-3xl" style="font-family: 'Helvetica Neue', sans-serif">
         Planning with the Gemini API
       </h1>
     </div>
 
     <div
-      class="w-full p-4 py-0 flex flex-col lg:items-start lg:flex-row lg:gap-6 justify-between items-center mx-auto"
+      class="w-full p-4 flex flex-col lg:items-start lg:flex-row lg:gap-6 justify-between items-center mx-auto"
     >
       <!-- Task Generation -->
       <div
@@ -47,7 +37,7 @@
         <div class="flex-grow flex flex-col justify-between overflow-scroll">
           <div>
             <!-- Checkbox Images Section -->
-            <div class="w-full flex gap-12 mb-4 p-4 justify-center mx-auto">
+            <div class="w-[90%] flex gap-12 justify-center mx-auto">
               <app-checkboximage
                 #location
                 [src]="'/assets/location.png'"
@@ -65,7 +55,7 @@
             <!-- Prompt Input Section -->
             <form>
               <div class="w-full flex flex-col justify-between gap-4 mb-4 p-4 lg:flex-row xl:flex-row">
-                <mat-form-field class="w-full mb-8" appearance="outline">
+                <mat-form-field class="w-11/12 mb-8" appearance="outline">
                   <mat-label>Add a prompt</mat-label>
                   <textarea
                     [formControl]="formControls.prompt"
@@ -90,7 +80,7 @@
                 </mat-form-field>
                 <button
                 mat-button
-                class="mt-6 flex items-center gap-2 pr-4 with-bg"
+                class="mt-6 flex items-center gap-2 pr-4"
                 (click)="onGoClick()"
                 [disabled]="!formControls.prompt.value"
               >
@@ -98,7 +88,7 @@
                   <img
                     src="../assets/spark_icon_24.svg"
                     alt="Gemini Icon"
-                    class="w-12 h-6"
+                    class="w-6 h-6"
                   />
                   <span class="p-2">Go</span>
                 </span>
@@ -128,8 +118,8 @@
           <div class="flex flex-row gap-4 w-full justify-end">
             <button
               mat-button
-              [disabled]="!generatedTask || !(firestoreReady | async)"
-              class="w-36 text-md with-bg"
+              [disabled]="!generatedTask"
+              class="w-36 text-md"
               (click)="onSave()"
             >
               Save

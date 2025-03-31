@@ -29,11 +29,11 @@ to store the to-do list items.
 
 ## Explore the app's codebase
 
-- In `src/bootstrap.js`, you can find important configuration values:
+- In `src/environments/environments.ts`, you can find important configuration values:
 
   - Within `firebase`, find the values needed to connect your app to Firebase
     (most importantly `apiKey`, `projectId`, and `appId`).
-  - Find your Gemini API key (`geminiApiKey`).
+  - Find your Gemini API key (`gemini_api_key`).
 
   Note that if you
   [run the sample app in IDX](https://github.com/FirebaseExtended/make-it-so-angular/main/README.md#set-up-and-run-the-app),
@@ -105,12 +105,12 @@ to complete some manual setup steps.
     c. Create a new Firebase web app in your new project.
     You can skip setting up Firebase Hosting.
     d. Copy your Firebase config object, and replace the placeholder values in the
-    `src/bootstrap.js` file of the sample app.
+    `src/environments/environments.ts` file of the sample app.
 
 2.  Set up the Gemini API:
     a. [Get a Gemini API key](https://aistudio.google.com/app/apikey) in Google AI Studio.
     Use the Firebase project you just created.
-    b. Add your Gemini API key into the `src/bootstrap.js` file of the sample app.
+    b. Add your Gemini API key into the `src/environments/environments.ts` file of the sample app.
 
 3.  Run `npm install` to install the app's dependencies.
 
@@ -173,7 +173,7 @@ your Firebase project (as described below).
         view and delete your Gemini API key.
       - In the sample app's codebase, delete references to the Gemini API key in the following places:
         - `google_apikeys_key` resource entry in `main.tf`
-        - `geminiApiKey` in both `src/bootstrap.js` and `src/bootstrap.js.tmpl`
+        - `gemini_api_key` in both `src/environments/environments.ts` and `src/environments/environments.ts.tmpl`
 
     - If you're no longer using the Google AI Gemini API, then disable it in your project
       and delete references to it in your sample app's codebase:

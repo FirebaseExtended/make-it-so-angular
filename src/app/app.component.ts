@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import { TaskComponent } from './task.component';
 import { CheckboximageComponent } from './checkboximage.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ChangeDetectionStrategy } from '@angular/core';
-import { environment } from '../environments/environments';
 
 const HELP_ME_CLEAN = 'You are an organization expert transforming this place to be enjoyed by a child and a toddler who love superheroes';
 const HELP_ME_PLAN = 'You are a travel expert planning a trip here for 5 people including one toddler and my mom who is turning 50.';
@@ -81,13 +80,9 @@ export class AppComponent {
       validators: Validators.required,
     }),
   };
-  readonly viewCodeLink = environment.viewCodeLink;
-  readonly viewCodeMessage = environment.viewCodeMessage;
-
   isLoading = signal(false);
   tasks: TaskWithSubtasks[] = [];
   generatedTask?: TaskWithSubtasks;
-  firestoreReady: Observable<boolean>;
 
   @ViewChild('location') locationImage! : CheckboximageComponent;
   @ViewChild('room') roomImage! : CheckboximageComponent;
@@ -98,12 +93,11 @@ export class AppComponent {
   constructor(
     public taskService: TaskService,
     private cdr: ChangeDetectorRef,
-  ) {
-    this.firestoreReady = this.taskService.firestoreReady;
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadTasks().subscribe();
+    this.onGoClick() // Generate the first task
   }
 
   async ngAfterViewInit() {

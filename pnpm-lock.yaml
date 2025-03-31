@@ -31,7 +31,7 @@ importers:
         version: 18.2.1(@angular/common@18.2.1(@angular/core@18.2.1(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.1(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.1(@angular/animations@18.2.1(@angular/core@18.2.1(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.1(@angular/core@18.2.1(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.1(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1)
       '@angular/material':
         specifier: ^18.1.4
-        version: 18.2.1(c6a7869e627edbc40a6bd515b10aebf0)
+        version: 18.2.1(xf4bg26sxibjwctkyum75pshta)
       '@angular/platform-browser':
         specifier: ^18.1.0
         version: 18.2.1(@angular/animations@18.2.1(@angular/core@18.2.1(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.1(@angular/core@18.2.1(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.1(rxjs@7.8.1)(zone.js@0.14.10))
@@ -41,9 +41,6 @@ importers:
       '@google/generative-ai':
         specifier: ^0.19.0
         version: 0.19.0
-      backoff-rxjs:
-        specifier: ^7.0.0
-        version: 7.0.0(rxjs@7.8.1)
       firebase:
         specifier: ^10.13.0
         version: 10.13.0
@@ -2160,11 +2157,6 @@ packages:
     resolution: {integrity: sha512-2R25rQZWP63nGwaAswvDazbPXfrM3HwVoBXK6HcqeKrSrL/JqcC/rDcf95l4r7LXLyxDXc8uQDa064GubtCABg==}
     peerDependencies:
       '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
-
-  backoff-rxjs@7.0.0:
-    resolution: {integrity: sha512-ZLxc3iR7f6V4qngxL8CTBjIvQj1VCVK/EaQ26a2Xcrq0lXtSsl1ESvFFjMTSqcL93c9gcSinPf6xg/Sm+zYckg==}
-    peerDependencies:
-      rxjs: ^7.0.0
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -5090,7 +5082,7 @@ snapshots:
       rxjs: 7.8.1
       tslib: 2.7.0
 
-  '@angular/material@18.2.1(c6a7869e627edbc40a6bd515b10aebf0)':
+  '@angular/material@18.2.1(xf4bg26sxibjwctkyum75pshta)':
     dependencies:
       '@angular/animations': 18.2.1(@angular/core@18.2.1(rxjs@7.8.1)(zone.js@0.14.10))
       '@angular/cdk': 18.2.1(@angular/common@18.2.1(@angular/core@18.2.1(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.1(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1)
@@ -7164,10 +7156,6 @@ snapshots:
       '@babel/helper-define-polyfill-provider': 0.6.2(@babel/core@7.25.2)
     transitivePeerDependencies:
       - supports-color
-
-  backoff-rxjs@7.0.0(rxjs@7.8.1):
-    dependencies:
-      rxjs: 7.8.1
 
   balanced-match@1.0.2: {}
 
