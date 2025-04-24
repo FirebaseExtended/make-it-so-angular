@@ -21,23 +21,22 @@ import { RoundbuttonComponent } from './roundbutton.component';
 import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
-  selector: 'app-task',
-  standalone: true,
-  imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
-    MatCheckbox,
-    MatButtonToggleModule,
-    MatIconModule,
-    MatButtonModule,
-    RoundbuttonComponent,
-    MatDividerModule,
-  ],
-  templateUrl: './task.component.html',
-  styleUrl: './task.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-task',
+    imports: [
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatCardContent,
+        MatCheckbox,
+        MatButtonToggleModule,
+        MatIconModule,
+        MatButtonModule,
+        RoundbuttonComponent,
+        MatDividerModule,
+    ],
+    templateUrl: './task.component.html',
+    styleUrl: './task.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskComponent {
   task = input(undefined as TaskWithSubtasks | undefined);

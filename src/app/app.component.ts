@@ -46,31 +46,30 @@ const HELP_ME_CLEAN = 'You are an organization expert transforming this place to
 const HELP_ME_PLAN = 'You are a travel expert planning a trip here for 5 people including one toddler and my mom who is turning 50.';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatSnackBarModule, // Do not remove: used by service.
-    MatButtonModule,
-    MatMenuModule,
-    MatChipsModule,
-    MatFormFieldModule,
-    MatSlideToggleModule,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    MatInputModule,
-    MatNativeDateModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    AsyncPipe,
-    TaskComponent,
-    CheckboximageComponent,
-  ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-root',
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatSnackBarModule, // Do not remove: used by service.
+        MatButtonModule,
+        MatMenuModule,
+        MatChipsModule,
+        MatFormFieldModule,
+        MatSlideToggleModule,
+        MatProgressSpinnerModule,
+        MatIconModule,
+        MatInputModule,
+        MatNativeDateModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        AsyncPipe,
+        TaskComponent,
+        CheckboximageComponent,
+    ],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
   readonly formControls = {

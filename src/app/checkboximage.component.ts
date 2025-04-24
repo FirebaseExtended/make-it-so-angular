@@ -10,12 +10,11 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-checkboximage',
-  standalone: true,
-  imports: [MatCheckbox, MatIconModule, MatCardModule],
-  templateUrl: './checkboximage.component.html',
-  styleUrl: './checkboximage.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-checkboximage',
+    imports: [MatCheckbox, MatIconModule, MatCardModule],
+    templateUrl: './checkboximage.component.html',
+    styleUrl: './checkboximage.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CheckboximageComponent {
   checked = input(false);
