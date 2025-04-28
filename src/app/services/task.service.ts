@@ -45,7 +45,7 @@ import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 import { v4 as uuidv4 } from 'uuid';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { environment } from '../../environments/environments';
-import { getVertexAI, getGenerativeModel } from 'firebase/vertexai-preview';
+import { getVertexAI, getGenerativeModel } from 'firebase/vertexai';
 
 type Priority = 'none' | 'low' | 'medium' | 'high';
 
@@ -93,8 +93,7 @@ export class TaskService {
   // first call to GenerateContent(). You may see a PERMISSION_DENIED error before then.
   private prodModel = getGenerativeModel(this.vertexAI, MODEL_CONFIG);
 
-  private genAI = new GoogleGenerativeAI(environment.gemini_api_key);
-  private experimentModel = this.genAI.getGenerativeModel(MODEL_CONFIG);
+  private experimentModel = getGenerativeModel(this.vertexAI, MODEL_CONFIG);
 
   user$ = authState(this.auth);
   public tasksSubject = new Subject<Task[]>();
