@@ -45,7 +45,7 @@ import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 import { v4 as uuidv4 } from 'uuid';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { environment } from '../../environments/environments';
-import { getVertexAI, getGenerativeModel } from 'firebase/vertexai-preview';
+import { getVertexAI, getGenerativeModel } from 'firebase/vertexai';
 
 type Priority = 'none' | 'low' | 'medium' | 'high';
 
