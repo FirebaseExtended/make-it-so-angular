@@ -22,6 +22,7 @@ import {
   provideAppCheck,
 } from '@angular/fire/app-check';
 import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getAI, provideAI } from '@angular/fire/ai';
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, provideFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environments';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -48,6 +49,7 @@ export const appConfig: ApplicationConfig = {
       // return appCheck;
     // }),
     provideAuth(() => getAuth()),
+    provideAI(() => getAI()),
     provideFirestore(() => 
       initializeFirestore(getApp(), {
         localCache: persistentLocalCache({
