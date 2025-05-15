@@ -46,7 +46,7 @@ import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 import { v4 as uuidv4 } from 'uuid';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { environment } from '../../environments/environments';
-import { getVertexAI, getGenerativeModel } from 'firebase/vertexai';
+import { getAI, getGenerativeModel } from 'firebase/ai';
 
 type Priority = 'none' | 'low' | 'medium' | 'high';
 
@@ -89,7 +89,7 @@ export class TaskService {
   private firestore = inject(Firestore);
   private auth = inject(Auth);
 
-  private vertexAI = getVertexAI(getApp());
+  private vertexAI = getAI(getApp());
   // Caveat: the VertexAI model may take a while (~10s) to initialize after your
   // first call to GenerateContent(). You may see a PERMISSION_DENIED error before then.
   private prodModel = getGenerativeModel(this.vertexAI, MODEL_CONFIG);
