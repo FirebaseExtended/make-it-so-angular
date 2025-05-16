@@ -45,7 +45,7 @@ import {
 import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 import { v4 as uuidv4 } from 'uuid';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { AI, Content, getGenerativeModel, getVertexAI, Part } from '@angular/fire/ai';
+import { AI, getGenerativeModel, getVertexAI } from '@angular/fire/ai';
 import { environment } from '../../environments/environments';
 
 type Priority = 'none' | 'low' | 'medium' | 'high';
@@ -95,7 +95,6 @@ export class TaskService {
   // first call to GenerateContent(). You may see a PERMISSION_DENIED error before then.
   private prodModel = getGenerativeModel(this.vertexAI, MODEL_CONFIG);
 
-  private genAI = new GoogleGenerativeAI(environment.geminiApiKey);
   private experimentModel = getGenerativeModel(this.ai, MODEL_CONFIG);
   private firestoreReadySubject = new BehaviorSubject(false);
   get firestoreReady(): Observable<boolean> {
