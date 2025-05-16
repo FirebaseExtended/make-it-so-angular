@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { initializeApp, provideFirebaseApp, getApp } from '@angular/fire/app';
+import { ApplicationConfig, inject, provideZoneChangeDetection } from '@angular/core';
+import { initializeApp, provideFirebaseApp, getApp, FirebaseApp } from '@angular/fire/app';
 import {
   ReCaptchaEnterpriseProvider,
   initializeAppCheck,
   provideAppCheck,
 } from '@angular/fire/app-check';
 import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getAI, GoogleAIBackend, provideAI } from '@angular/fire/ai';
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, provideFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environments';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -47,6 +48,7 @@ export const appConfig: ApplicationConfig = {
       // });
       // return appCheck;
     // }),
+    provideAI(() => getAI(inject(FirebaseApp), {backend: new GoogleAIBackend()})),
     provideAuth(() => getAuth()),
     provideFirestore(() => 
       initializeFirestore(getApp(), {
