@@ -77,8 +77,7 @@ const taskSchema = Schema.object({
     subtasks: Schema.array({
       items: Schema.string(),
     }),
-  },
-  required: ["title", "subtasks"], // Specify required properties
+  }
 });
 
 const MODEL_CONFIG = {
