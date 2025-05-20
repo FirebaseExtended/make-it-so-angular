@@ -45,7 +45,7 @@ import {
 import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 import { v4 as uuidv4 } from 'uuid';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { AI, getGenerativeModel, getVertexAI } from '@angular/fire/ai';
+import { AI, getGenerativeModel, getVertexAI, Schema } from '@angular/fire/ai';
 import { environment } from '../../environments/environments';
 
 type Priority = 'none' | 'low' | 'medium' | 'high';
@@ -71,15 +71,23 @@ type GeneratedTasks = {
   subtasks: string[];
 }
 
+const taskSchema = Schema.object({
+  properties: {
+    title: Schema.string(),
+    subtasks: Schema.array({
+      items: Schema.string(),
+    }),
+  },
+  required: ["title", "subtasks"], // Specify required properties
+});
+
 const MODEL_CONFIG = {
   model: 'gemini-2.0-flash',
-  generationConfig: { responseMimeType: 'application/json'},
-  systemInstruction: `Keep task names short, ideally within 7 words. Use the following schema in your response ${
-    JSON.stringify({
-      title: "string",
-      subtasks: "string[]",
-    })
-  }. The substasks should follow logical order`,
+  generationConfig: {
+    responseMimeType: 'application/json',
+    responseSchema: taskSchema,
+  },
+  systemInstruction: `Keep task names short, ideally within 7 words. The subtasks should follow logical order.`,
 };
 
 @Injectable({
