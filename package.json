@@ -9,38 +9,24 @@
     "test": "ng test"
   },
   "private": true,
-  "overrides": {
-    "@angular/fire": {
-      "firebase": "11.8.0-20250512211235"
-    },
-    "firebase": "11.8.0-20250512211235"
-  },
-  "pnpm": {
-    "overrides": {
-      "@angular/fire": {
-        "firebase": "11.8.0-20250512211235"
-      },
-      "firebase": "11.8.0-20250512211235"
-    }
-  },
   "dependencies": {
-    "@angular/animations": "^19.2.10",
+    "@angular/animations": "^19.2.11",
     "@angular/cdk": "^19.2.16",
-    "@angular/common": "^19.2.10",
-    "@angular/compiler": "^19.2.10",
-    "@angular/core": "^19.2.10",
-    "@angular/fire": "^19.1.0-canary.20bee94",
-    "@angular/forms": "^19.2.10",
+    "@angular/common": "^19.2.11",
+    "@angular/compiler": "^19.2.11",
+    "@angular/core": "^19.2.11",
+    "@angular/fire": "^19.2.0",
+    "@angular/forms": "^19.2.11",
     "@angular/material": "^19.2.16",
-    "@angular/platform-browser": "^19.2.10",
-    "@angular/platform-browser-dynamic": "^19.2.10",
+    "@angular/platform-browser": "^19.2.11",
+    "@angular/platform-browser-dynamic": "^19.2.11",
     "@google/generative-ai": "^0.24.1",
-    "@tailwindcss/postcss": "^4.1.6",
+    "@tailwindcss/postcss": "^4.1.7",
     "backoff-rxjs": "^7.0.0",
-    "firebase": "11.8.0-20250512211235",
+    "firebase": "11.8.0",
     "postcss": "^8.5.3",
     "rxjs": "~7.8.2",
-    "tailwindcss": "^4.1.6",
+    "tailwindcss": "^4.1.7",
     "tslib": "^2.8.1",
     "uuid": "^11.1.0",
     "zone.js": "~0.15.0"
@@ -48,7 +34,7 @@
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.2.12",
     "@angular/cli": "^19.2.12",
-    "@angular/compiler-cli": "^19.2.10",
+    "@angular/compiler-cli": "^19.2.11",
     "@types/jasmine": "~5.1.8",
     "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.21",
