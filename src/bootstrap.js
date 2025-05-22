@@ -1,6 +1,6 @@
 window["APP_TEMPLATE_BOOTSTRAP"] = {
   firebase: {
-    apiKey: "API_KEY",
+    apiKey: "FIREBASE_API_KEY",  // this is NOT your Gemini API key
     authDomain: "PROJECT_ID.firebaseapp.com",
     databaseURL: "https://PROJECT_ID.firebaseio.com",
     projectId: "PROJECT_ID",
