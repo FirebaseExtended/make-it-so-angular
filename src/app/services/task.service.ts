@@ -43,7 +43,7 @@ import {
   CollectionReference,
 } from '@angular/fire/firestore';
 import { v4 as uuidv4 } from 'uuid';
-import { AI, getGenerativeModel, getAI, Schema, AIError } from '@angular/fire/ai';
+import { AI, getGenerativeModel, getAI, Schema, AIError, GoogleAIBackend } from '@angular/fire/ai';
 import { environment } from '../../environments/environments';
 
 type Priority = 'none' | 'low' | 'medium' | 'high';
@@ -94,11 +94,11 @@ export class TaskService {
   private firestore = inject(Firestore);
   private auth = inject(Auth);
   private ai = inject(AI);
-// Initialize the Gemini Developer API backend service
-  private vertexAI = getAI(getApp());
+  // Initialize the Gemini Developer API backend service
+  private firebaseAI = getAI(getApp(), { backend: new GoogleAIBackend() });
   // Caveat: the VertexAI model may take a while (~10s) to initialize after your
   // first call to GenerateContent(). You may see a PERMISSION_DENIED error before then.
-  private prodModel = getGenerativeModel(this.vertexAI, MODEL_CONFIG);
+  private prodModel = getGenerativeModel(this.firebaseAI, MODEL_CONFIG);
 
   private experimentModel = getGenerativeModel(this.ai, MODEL_CONFIG);
   private firestoreReadySubject = new BehaviorSubject(false);
