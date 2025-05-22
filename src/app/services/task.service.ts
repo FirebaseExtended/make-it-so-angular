@@ -98,6 +98,7 @@ export class TaskService {
   private firebaseAI = getAI(getApp(), { backend: new GoogleAIBackend() });
   // Caveat: the Gemini Developer API backend service may take a while (~10s) to initialize after your
   // first call to GenerateContent(). You may see a PERMISSION_DENIED error before then.
+  // Create a `GenerativeModel` instance with a model that supports your use case
   private prodModel = getGenerativeModel(this.firebaseAI, MODEL_CONFIG);
 
   private experimentModel = getGenerativeModel(this.ai, MODEL_CONFIG);
