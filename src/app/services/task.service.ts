@@ -94,7 +94,7 @@ export class TaskService {
   private firestore = inject(Firestore);
   private auth = inject(Auth);
   private ai = inject(AI);
-
+// Initialize the Gemini Developer API backend service
   private vertexAI = getAI(getApp());
   // Caveat: the VertexAI model may take a while (~10s) to initialize after your
   // first call to GenerateContent(). You may see a PERMISSION_DENIED error before then.
