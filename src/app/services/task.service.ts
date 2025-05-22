@@ -42,10 +42,8 @@ import {
   where,
   CollectionReference,
 } from '@angular/fire/firestore';
-import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 import { v4 as uuidv4 } from 'uuid';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { AI, getGenerativeModel, getVertexAI, Schema } from '@angular/fire/ai';
+import { AI, getGenerativeModel, getAI, Schema, AIError } from '@angular/fire/ai';
 import { environment } from '../../environments/environments';
 
 type Priority = 'none' | 'low' | 'medium' | 'high';
@@ -96,8 +94,8 @@ export class TaskService {
   private firestore = inject(Firestore);
   private auth = inject(Auth);
   private ai = inject(AI);
-  
-  private vertexAI = getVertexAI(getApp());
+
+  private vertexAI = getAI(getApp());
   // Caveat: the VertexAI model may take a while (~10s) to initialize after your
   // first call to GenerateContent(). You may see a PERMISSION_DENIED error before then.
   private prodModel = getGenerativeModel(this.vertexAI, MODEL_CONFIG);
@@ -151,7 +149,7 @@ export class TaskService {
 
   handleError(error: any, userMessage?: string, duration: number = 3000): void {
     const projectId = environment.firebase?.projectId || '';
-    if (error instanceof GoogleGenerativeAIFetchError) {
+    if (error instanceof AIError) {
       if (error.message.indexOf('API key not valid') > 0) {
         userMessage = `Error loading Gemini API key. Please check the Google Cloud console if the API key was created at https://console.cloud.google.com/apis/credentials?project=${projectId}`;
       } else {
@@ -191,10 +189,10 @@ export class TaskService {
     );
     return defer(() => this.loadTaskCount()).pipe(
       retryBackoff({
-          initialInterval: 500,
-          maxInterval: 2000,
-          maxRetries: 20,
-        }
+        initialInterval: 500,
+        maxInterval: 2000,
+        maxRetries: 20,
+      }
       ),
       switchMap((taskCount) => {
         this.firestoreReadySubject.next(true);

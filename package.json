@@ -20,7 +20,6 @@
     "@angular/material": "^19.2.16",
     "@angular/platform-browser": "^19.2.11",
     "@angular/platform-browser-dynamic": "^19.2.11",
-    "@google/generative-ai": "^0.24.1",
     "@tailwindcss/postcss": "^4.1.7",
     "backoff-rxjs": "^7.0.0",
     "firebase": "11.8.0",
