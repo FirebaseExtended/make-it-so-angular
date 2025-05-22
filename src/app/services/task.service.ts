@@ -42,10 +42,8 @@ import {
   where,
   CollectionReference,
 } from '@angular/fire/firestore';
-import { GoogleGenerativeAIFetchError } from '@google/generative-ai';
 import { v4 as uuidv4 } from 'uuid';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { AI, getGenerativeModel, getVertexAI, Schema } from '@angular/fire/ai';
+import { AI, getGenerativeModel, getAI, Schema, AIError, GoogleAIBackend } from '@angular/fire/ai';
 import { environment } from '../../environments/environments';
 
 type Priority = 'none' | 'low' | 'medium' | 'high';
@@ -96,11 +94,12 @@ export class TaskService {
   private firestore = inject(Firestore);
   private auth = inject(Auth);
   private ai = inject(AI);
-  
-  private vertexAI = getVertexAI(getApp());
-  // Caveat: the VertexAI model may take a while (~10s) to initialize after your
+  // Initialize the Gemini Developer API backend service
+  private firebaseAI = getAI(getApp(), { backend: new GoogleAIBackend() });
+  // Caveat: the Gemini Developer API backend service may take a while (~10s) to initialize after your
   // first call to GenerateContent(). You may see a PERMISSION_DENIED error before then.
-  private prodModel = getGenerativeModel(this.vertexAI, MODEL_CONFIG);
+  // Create a `GenerativeModel` instance with a model that supports your use case
+  private prodModel = getGenerativeModel(this.firebaseAI, MODEL_CONFIG);
 
   private experimentModel = getGenerativeModel(this.ai, MODEL_CONFIG);
   private firestoreReadySubject = new BehaviorSubject(false);
@@ -151,12 +150,8 @@ export class TaskService {
 
   handleError(error: any, userMessage?: string, duration: number = 3000): void {
     const projectId = environment.firebase?.projectId || '';
-    if (error instanceof GoogleGenerativeAIFetchError) {
-      if (error.message.indexOf('API key not valid') > 0) {
-        userMessage = `Error loading Gemini API key. Please check the Google Cloud console if the API key was created at https://console.cloud.google.com/apis/credentials?project=${projectId}`;
-      } else {
-        userMessage = error.message;
-      }
+    if (error instanceof AIError) {
+      userMessage = error.message;
       duration = 10000;
     }
     if (error.message.indexOf('Missing or insufficient permissions') >= 0) {
@@ -191,10 +186,10 @@ export class TaskService {
     );
     return defer(() => this.loadTaskCount()).pipe(
       retryBackoff({
-          initialInterval: 500,
-          maxInterval: 2000,
-          maxRetries: 20,
-        }
+        initialInterval: 500,
+        maxInterval: 2000,
+        maxRetries: 20,
+      }
       ),
       switchMap((taskCount) => {
         this.firestoreReadySubject.next(true);
