@@ -79,7 +79,7 @@ const taskSchema = Schema.object({
 });
 
 const MODEL_CONFIG = {
-  model: 'gemini-2.0-flash',
+  model: 'gemini-2.5-flash-preview-05-20',
   generationConfig: {
     responseMimeType: 'application/json',
     responseSchema: taskSchema,
