@@ -70,7 +70,7 @@ The project and app are yours to experiment with and explore how the Gemini API 
 
 You can also kick-off this custom workflow from the Firebase console from various banners.
 
-[!NOTE] This workflow creates a new Firebase Studio workspace. If you run out of workspace quota, go to [studio.firebase.google.com](studio.firebase.google.com/) to delete an old workspace.
+NOTE: This workflow creates a new Firebase Studio workspace. If you run out of workspace quota, go to [studio.firebase.google.com](studio.firebase.google.com/) to delete an old workspace.
 
 ### Option 2: Run locally
 
