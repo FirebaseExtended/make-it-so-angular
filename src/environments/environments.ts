@@ -27,8 +27,6 @@ export declare interface BootstrapData {
     measurementId?: string,
     appId?: string,
   };
-  geminiApiKey?: string;
-  debugToken?: string;
   viewCodeLink?: string;
   viewCodeMessage?: string;
 }
@@ -43,7 +41,6 @@ export const environment = {
   firebase: {
       ...bootstrapData?.firebase,
   },
-  geminiApiKey: bootstrapData?.geminiApiKey || '',
   viewCodeLink: bootstrapData?.viewCodeLink || '',
   viewCodeMessage: bootstrapData?.viewCodeMessage || '',
 };
