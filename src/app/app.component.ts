@@ -81,9 +81,6 @@ export class AppComponent {
       validators: Validators.required,
     }),
   };
-  readonly viewCodeLink = environment.viewCodeLink;
-  readonly viewCodeMessage = environment.viewCodeMessage;
-
   isLoading = signal(false);
   tasks: TaskWithSubtasks[] = [];
   generatedTask?: TaskWithSubtasks;
