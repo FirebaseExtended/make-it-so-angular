@@ -15,7 +15,7 @@
  */
 
 import { ViewChild, ChangeDetectorRef, Component, signal } from '@angular/core';
-import { Timestamp } from '@angular/fire/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import {
   FormControl,

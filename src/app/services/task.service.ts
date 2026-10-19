@@ -16,13 +16,12 @@
 
 import { NgZone, inject, Injectable } from '@angular/core';
 import {
-  Auth,
-  authState,
+  onAuthStateChanged,
   signInAnonymously,
   signOut,
   User,
-} from '@angular/fire/auth';
-import { getApp } from '@angular/fire/app';
+} from 'firebase/auth';
+import { getApp } from 'firebase/app';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { retryBackoff } from 'backoff-rxjs';
 import { switchMap, tap, take, catchError } from 'rxjs/operators';
@@ -33,18 +32,19 @@ import {
   setDoc,
   collection,
   deleteDoc,
-  collectionData,
-  collectionCount,
   getCountFromServer,
   query,
   orderBy,
   Timestamp,
   where,
   CollectionReference,
-} from '@angular/fire/firestore';
+  onSnapshot,
+  Query,
+} from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
-import { AI, getGenerativeModel, getAI, Schema, AIError, GoogleAIBackend } from '@angular/fire/ai';
+import { getGenerativeModel, getAI, Schema, AIError, GoogleAIBackend, InlineDataPart } from 'firebase/ai';
 import { environment } from '../../environments/environments';
+import { FIREBASE_AI, FIREBASE_AUTH } from '../app.config';
 
 type Priority = 'none' | 'low' | 'medium' | 'high';
 
@@ -92,8 +92,8 @@ const MODEL_CONFIG = {
 })
 export class TaskService {
   private firestore = inject(Firestore);
-  private auth = inject(Auth);
-  private ai = inject(AI);
+  private auth = inject(FIREBASE_AUTH);
+  private ai = inject(FIREBASE_AI);
   // Initialize the Gemini Developer API backend service
   private firebaseAI = getAI(getApp(), { backend: new GoogleAIBackend() });
   // Caveat: the Gemini Developer API backend service may take a while (~10s) to initialize after your
@@ -107,7 +107,14 @@ export class TaskService {
     return this.firestoreReadySubject.asObservable();
   }
 
-  user$ = authState(this.auth);
+  user$ = new Observable<User | null>((subscriber) =>
+    onAuthStateChanged(
+      this.auth,
+      (user) => this.zone.run(() => subscriber.next(user)),
+      (error) => this.zone.run(() => subscriber.error(error)),
+      () => this.zone.run(() => subscriber.complete())
+    )
+  );
   public tasksSubject = new Subject<Task[]>();
   tasks$ = this.tasksSubject.asObservable(); // Observable for components to subscribe to
   currentUser: User | null = null;
@@ -178,6 +185,27 @@ export class TaskService {
     return 'local-' + uuidv4();
   }
 
+  private collectionData<T>(q: Query): Observable<T[]> {
+    return new Observable<T[]>((subscriber) =>
+      onSnapshot(
+        q,
+        (snapshot) => {
+          const items = snapshot.docs.map(
+            (docSnapshot) =>
+              ({
+                ...docSnapshot.data(),
+                id: docSnapshot.id,
+              }) as T
+          );
+          this.zone.run(() => subscriber.next(items));
+        },
+        (error) => {
+          this.zone.run(() => subscriber.error(error));
+        }
+      )
+    );
+  }
+
   loadTasks(): Observable<Task[]> {
     const taskQuery = query(
       collection(this.firestore, 'todos'),
@@ -196,9 +224,7 @@ export class TaskService {
         if (taskCount.data().count === 0) {
           return of([] as Task[]);
         }
-        return collectionData(taskQuery, { idField: 'id' }) as Observable<
-          Task[]
-        >;
+        return this.collectionData<Task>(taskQuery);
       }),
       catchError((error: Error) => {
         this.handleError(error);
@@ -221,7 +247,7 @@ export class TaskService {
       where('parentId', '==', maintaskId),
       orderBy('order', 'asc')
     );
-    return collectionData(subtaskQuery, { idField: 'id' });
+    return this.collectionData<Task>(subtaskQuery);
   }
 
   createTaskRef(id?: string) {
@@ -229,7 +255,7 @@ export class TaskService {
     return id ? doc(taskCollection, id) : doc(taskCollection); // Firestore generates ID if not provided
   }
 
-  async fileToGenerativePart(file: File) {
+  async fileToGenerativePart(file: File): Promise<InlineDataPart> {
     const base64EncodedDataPromise = new Promise((resolve) => {
       const reader = new FileReader();
       reader.onloadend = () =>
@@ -239,8 +265,9 @@ export class TaskService {
     const result = await base64EncodedDataPromise;
     const chew = JSON.stringify(result).slice(1, -3);
     return {
+      type: 'inlineData',
       inlineData: { data: chew, mimeType: file.type },
-    } as any;
+    };
   }
 
   async updateTask(maintask: Task): Promise<void> {
@@ -266,11 +293,11 @@ export class TaskService {
       };
     }
 
-    const imagePart = file ? await this.fileToGenerativePart(file) : '';
+    const imagePart = file ? await this.fileToGenerativePart(file) : undefined;
 
     try {
       const result = await this.experimentModel.generateContent(
-        [prompt, imagePart].filter(Boolean)
+        imagePart ? [prompt, imagePart] : [prompt]
       );
       const response = await result.response.text();
       return JSON.parse(response);

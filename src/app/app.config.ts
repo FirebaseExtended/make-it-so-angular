@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-import { ApplicationConfig, inject, provideZoneChangeDetection } from '@angular/core';
-import { initializeApp, provideFirebaseApp, getApp, FirebaseApp } from '@angular/fire/app';
 import {
+  ApplicationConfig,
+  InjectionToken,
+  inject,
+  provideEnvironmentInitializer,
+  provideZoneChangeDetection,
+} from '@angular/core';
+import { FirebaseApp, initializeApp } from 'firebase/app';
+import {
+  AppCheck,
   ReCaptchaEnterpriseProvider,
   initializeAppCheck,
-  provideAppCheck,
-} from '@angular/fire/app-check';
-import { getAuth, provideAuth } from '@angular/fire/auth';
-import { getAI, GoogleAIBackend, provideAI } from '@angular/fire/ai';
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, provideFirestore } from '@angular/fire/firestore';
+} from 'firebase/app-check';
+import { Auth, getAuth } from 'firebase/auth';
+import { AI, GoogleAIBackend, getAI } from 'firebase/ai';
+import {
+  Firestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore';
 import { environment } from '../environments/environments';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
@@ -31,32 +42,58 @@ declare global {
   var FIREBASE_APPCHECK_DEBUG_TOKEN: string;
 }
 
+export const FIREBASE_APP = new InjectionToken<FirebaseApp>('FIREBASE_APP');
+export const FIREBASE_AUTH = new InjectionToken<Auth>('FIREBASE_AUTH');
+export const FIREBASE_AI = new InjectionToken<AI>('FIREBASE_AI');
+export const FIREBASE_APP_CHECK = new InjectionToken<AppCheck>('FIREBASE_APP_CHECK');
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideFirebaseApp(() =>
-      initializeApp(environment.firebase), 
-    ),
-    // Turn on app check for Vertex AI in Firebase
-    // provideAppCheck(() => {
-      // TODO: don't use debug token in prod
-      // self.FIREBASE_APPCHECK_DEBUG_TOKEN = environment.debug_token;
+    {
+      provide: FIREBASE_APP,
+      useFactory: () => initializeApp(environment.firebase),
+    },
+    ...(environment.firebase.recaptchaSiteKey
+      ? [
+          // Turn on app check for Vertex AI in Firebase
+          {
+            provide: FIREBASE_APP_CHECK,
+            useFactory: () => {
+              // TODO: don't use debug token in prod
+              // self.FIREBASE_APPCHECK_DEBUG_TOKEN = environment.debug_token;
 
-      // const appCheck = initializeAppCheck(getApp(), {
-      //   provider: new ReCaptchaEnterpriseProvider("your site key here"),
-      //   isTokenAutoRefreshEnabled: true,
-      // });
-      // return appCheck;
-    // }),
-    provideAI(() => getAI(inject(FirebaseApp), {backend: new GoogleAIBackend()})),
-    provideAuth(() => getAuth()),
-    provideFirestore(() => 
-      initializeFirestore(getApp(), {
-        localCache: persistentLocalCache({
-          tabManager: persistentMultipleTabManager(),
+              return initializeAppCheck(inject(FIREBASE_APP), {
+                provider: new ReCaptchaEnterpriseProvider(
+                  environment.firebase.recaptchaSiteKey || ''
+                ),
+                isTokenAutoRefreshEnabled: true,
+              });
+            },
+          },
+          provideEnvironmentInitializer(() => {
+            inject(FIREBASE_APP_CHECK);
+          }),
+        ]
+      : []),
+    {
+      provide: FIREBASE_AI,
+      useFactory: () =>
+        getAI(inject(FIREBASE_APP), { backend: new GoogleAIBackend() }),
+    },
+    {
+      provide: FIREBASE_AUTH,
+      useFactory: () => getAuth(inject(FIREBASE_APP)),
+    },
+    {
+      provide: Firestore,
+      useFactory: () =>
+        initializeFirestore(inject(FIREBASE_APP), {
+          localCache: persistentLocalCache({
+            tabManager: persistentMultipleTabManager(),
+          }),
         }),
-      })
-    ),
-    provideAnimationsAsync(), 
+    },
+    provideAnimationsAsync(),
   ],
 };
